@@ -5,6 +5,9 @@
  */
 package portscanner;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -21,6 +24,9 @@ import javafx.scene.text.Font;
  * @author William Deming
  */
 public class ScannerPane extends GridPane{
+    protected CheckBox scanOptionsSYN, scanOptionsACK;
+    protected TextArea networkText, scanOutputText;
+    
     public ScannerPane(){
         this.setPadding(new Insets(30, 10, 30, 20));
         
@@ -28,10 +34,7 @@ public class ScannerPane extends GridPane{
         networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
-        TextArea networkText = new TextArea("ifconfig output here\n\n" +
-                                              "Devices on this network:\n" +
-                                              "10.20.8.21       10.20.8.22\n" +
-                                              "10.20.8.23       10.20.8.103");
+        networkText = new TextArea("ifconfig output here\n\n");
         networkText.setFont(Font.font("Consolas", 12));
         networkText.setPrefSize(350, 200);
         this.add(networkText, 1, 2);
@@ -41,12 +44,12 @@ public class ScannerPane extends GridPane{
         scanOptionsLabel.setPadding(new Insets(40, 0, 0, 0));
         this.add(scanOptionsLabel, 1, 3);
         
-        CheckBox scanOptionsSYN = new CheckBox("SYN Scan");
+        scanOptionsSYN = new CheckBox("SYN Scan");
         scanOptionsSYN.setFont(Font.font("Consolas", 14));
         scanOptionsSYN.setPadding(new Insets(0, 0, 5, 0));
         this.add(scanOptionsSYN, 1, 4);
         
-        CheckBox scanOptionsACK = new CheckBox("ACK Scan");
+        scanOptionsACK = new CheckBox("ACK Scan");
         scanOptionsACK.setFont(Font.font("Consolas", 14));
         scanOptionsACK.setPadding(new Insets(0, 0, 5, 0));
         this.add(scanOptionsACK, 1, 5);
@@ -71,6 +74,21 @@ public class ScannerPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Beginning scan...");
+                String[] command = {"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", "10.0.2.15"};
+                ProcessBuilder pb = new ProcessBuilder(command);
+                try{
+                    Process process = pb.start();
+                    InputStream is = process.getInputStream();
+                    InputStreamReader isr = new InputStreamReader(is);
+                    BufferedReader br = new BufferedReader(isr);
+                    String line;
+                    while ((line = br.readLine()) != null){
+                        System.out.println(line);
+                        addScanOutput(line);
+                    }
+                } catch(Exception ex){
+                    System.out.println("Exception " + ex + " was caught.");
+                }
             }
         });
         startScanButton.setAlignment(Pos.CENTER);
@@ -85,10 +103,7 @@ public class ScannerPane extends GridPane{
         scanOutputLabel.setTranslateX(175);
         this.add(scanOutputLabel, 2, 1);
         
-        TextArea scanOutputText = new TextArea("scan output here\n\n" +
-                                              "10.20.8.21:22 open\n" +
-                                              "10.20.8.21:23 closed\n" +
-                                              "10.20.8.21:443 filtered");
+        scanOutputText = new TextArea("scan output here\n\n");
         scanOutputText.setFont(Font.font("Consolas", 12));
         scanOutputText.setPrefSize(425, 400);
         scanOutputText.setTranslateX(175);
@@ -125,5 +140,9 @@ public class ScannerPane extends GridPane{
         saveReportButton.setTranslateX(300);
         saveReportButton.setTranslateY(30);
         this.add(saveReportButton, 2, 4);
+    }
+    
+    public void addScanOutput(String text){
+        scanOutputText.appendText(text + "\n");
     }
 }
