@@ -34,10 +34,27 @@ public class ScannerPane extends GridPane{
         networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
-        networkText = new TextArea("ifconfig output here\n\n");
+        networkText = new TextArea("ifconfig output:\n\n");
         networkText.setFont(Font.font("Consolas", 12));
-        networkText.setPrefSize(350, 200);
+        networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
+        
+        System.out.println("Getting network info...");
+        String[] command = {"ifconfig"};
+        ProcessBuilder pb = new ProcessBuilder(command);
+        try{
+            Process process = pb.start();
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            while ((line = br.readLine()) != null){
+                System.out.println(line);
+                networkText.appendText(line + "\n");
+            }
+        } catch(Exception ex){
+            System.out.println("Exception " + ex + " was caught.");
+        }
         
         Label scanOptionsLabel = new Label("Scan Options:");
         scanOptionsLabel.setFont(Font.font("Consolas", 18));
@@ -74,7 +91,7 @@ public class ScannerPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Beginning scan...");
-                String[] command = {"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", "10.0.2.15"};
+                String[] command = {"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", "10.0.8.23"};
                 ProcessBuilder pb = new ProcessBuilder(command);
                 try{
                     Process process = pb.start();
@@ -94,19 +111,19 @@ public class ScannerPane extends GridPane{
         startScanButton.setAlignment(Pos.CENTER);
         startScanButton.setFont(Font.font("Consolas", 18));
         startScanButton.setPrefSize(200, 50);
-        startScanButton.setTranslateX(75);
-        startScanButton.setTranslateY(30);
+        startScanButton.setTranslateX(0);
+        startScanButton.setTranslateY(0);
         this.add(startScanButton, 1, 7);
         
         Label scanOutputLabel = new Label("Scan Output:");
         scanOutputLabel.setFont(Font.font("Consolas", 22));
-        scanOutputLabel.setTranslateX(175);
+        scanOutputLabel.setTranslateX(0);
         this.add(scanOutputLabel, 2, 1);
         
         scanOutputText = new TextArea("scan output here\n\n");
         scanOutputText.setFont(Font.font("Consolas", 12));
-        scanOutputText.setPrefSize(425, 400);
-        scanOutputText.setTranslateX(175);
+        scanOutputText.setPrefSize(500, 500);
+        scanOutputText.setTranslateX(0);
         this.add(scanOutputText, 2, 2);
         
         Button sendReportButton = new Button();
@@ -121,7 +138,7 @@ public class ScannerPane extends GridPane{
         sendReportButton.setAlignment(Pos.CENTER);
         sendReportButton.setFont(Font.font("Consolas", 18));
         sendReportButton.setPrefSize(200, 50);
-        sendReportButton.setTranslateX(300);
+        sendReportButton.setTranslateX(150);
         sendReportButton.setTranslateY(30);
         this.add(sendReportButton, 2, 3);
         
@@ -137,7 +154,7 @@ public class ScannerPane extends GridPane{
         saveReportButton.setAlignment(Pos.CENTER);
         saveReportButton.setFont(Font.font("Consolas", 18));
         saveReportButton.setPrefSize(200, 50);
-        saveReportButton.setTranslateX(300);
+        saveReportButton.setTranslateX(150);
         saveReportButton.setTranslateY(30);
         this.add(saveReportButton, 2, 4);
     }

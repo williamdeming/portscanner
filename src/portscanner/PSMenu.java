@@ -21,7 +21,7 @@ public class PSMenu extends MenuBar{
     public PSMenu(){
         Menu menuPresets = new Menu("Presets");
         MenuItem viewPresets = new MenuItem("View Presets",
-            new ImageView(new Image("images/viewpresets.png")));
+            new ImageView(new Image("resources/images/viewpresets.png")));
         viewPresets.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 
@@ -31,7 +31,7 @@ public class PSMenu extends MenuBar{
         
         Menu menuEmail = new Menu("Email");
         MenuItem emailGroup = new MenuItem("Email Group",
-            new ImageView(new Image("images/emailgroup.png")));
+            new ImageView(new Image("resources/images/emailgroup.png")));
         emailGroup.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 
@@ -41,7 +41,7 @@ public class PSMenu extends MenuBar{
         
         Menu menuSettings = new Menu("Settings");
         MenuItem editSettings = new MenuItem("Edit Settings",
-            new ImageView(new Image("images/editsettings.png")));
+            new ImageView(new Image("resources/images/editsettings.png")));
         editSettings.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 
@@ -51,7 +51,7 @@ public class PSMenu extends MenuBar{
         
         Menu menuHelp = new Menu("Help");
         MenuItem getHelp = new MenuItem("Get Help",
-            new ImageView(new Image("images/gethelp.png")));
+            new ImageView(new Image("resources/images/gethelp.png")));
         getHelp.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 

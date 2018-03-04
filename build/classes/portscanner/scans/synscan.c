@@ -9,7 +9,7 @@
 
 /* Original authors: Justin Clarke, Nitesh Dhanjani */
 /* Book: Network Security Tools, Section 11.4. Combining libnet and libpcap */
-/* books.gigatux.nl/mirror/networksecuritytools/0596007949/toc.html) */
+/* books.gigatux.nl/mirror/networksecuritytools/0596007949/toc.html */
 
 int answer = 0;            /* flag for scan timeout */
 

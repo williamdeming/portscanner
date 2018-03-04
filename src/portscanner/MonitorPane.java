@@ -5,6 +5,9 @@
  */
 package portscanner;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -28,13 +31,27 @@ public class MonitorPane extends GridPane{
         networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
-        TextArea networkText = new TextArea("ifconfig output here\n\n" +
-                                              "Devices on this network:\n" +
-                                              "10.20.8.21       10.20.8.22\n" +
-                                              "10.20.8.23       10.20.8.103");
+        TextArea networkText = new TextArea("ifconfig output:\n\n");
         networkText.setFont(Font.font("Consolas", 12));
-        networkText.setPrefSize(350, 200);
+        networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
+        
+        System.out.println("Getting network info...");
+        String[] command = {"ifconfig"};
+        ProcessBuilder pb = new ProcessBuilder(command);
+        try{
+            Process process = pb.start();
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            while ((line = br.readLine()) != null){
+                System.out.println(line);
+                networkText.appendText(line + "\n");
+            }
+        } catch(Exception ex){
+            System.out.println("Exception " + ex + " was caught.");
+        }
         
         Label monitorOptionsLabel = new Label("Monitor Options:");
         monitorOptionsLabel.setFont(Font.font("Consolas", 18));
@@ -81,7 +98,7 @@ public class MonitorPane extends GridPane{
         
         Label monitorOutputLabel = new Label("Monitor Output:");
         monitorOutputLabel.setFont(Font.font("Consolas", 22));
-        monitorOutputLabel.setTranslateX(175);
+        monitorOutputLabel.setTranslateX(0);
         this.add(monitorOutputLabel, 2, 1);
         
         TextArea monitorOutputText = new TextArea("monitor output here\n\n" +
@@ -89,8 +106,8 @@ public class MonitorPane extends GridPane{
                                               "10.20.8.21:23 closed                    11:22:19 PM 2/13/2018\n" +
                                               "10.20.8.21:443 filtered                 11:22:30 PM 2/13/2018");
         monitorOutputText.setFont(Font.font("Consolas", 12));
-        monitorOutputText.setPrefSize(425, 400);
-        monitorOutputText.setTranslateX(175);
+        monitorOutputText.setPrefSize(500, 500);
+        monitorOutputText.setTranslateX(0);
         this.add(monitorOutputText, 2, 2);
         
         Button sendReportButton = new Button();
@@ -105,7 +122,7 @@ public class MonitorPane extends GridPane{
         sendReportButton.setAlignment(Pos.CENTER);
         sendReportButton.setFont(Font.font("Consolas", 18));
         sendReportButton.setPrefSize(200, 50);
-        sendReportButton.setTranslateX(300);
+        sendReportButton.setTranslateX(150);
         sendReportButton.setTranslateY(30);
         this.add(sendReportButton, 2, 3);
         
@@ -121,7 +138,7 @@ public class MonitorPane extends GridPane{
         saveReportButton.setAlignment(Pos.CENTER);
         saveReportButton.setFont(Font.font("Consolas", 18));
         saveReportButton.setPrefSize(200, 50);
-        saveReportButton.setTranslateX(300);
+        saveReportButton.setTranslateX(150);
         saveReportButton.setTranslateY(30);
         this.add(saveReportButton, 2, 4);
     }

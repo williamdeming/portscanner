@@ -46,8 +46,8 @@ public class PortScanner extends Application {
         Tab scannerTab = new Tab();
         scannerTab.setClosable(false);
         scannerTab.setText("                                  " +
-                           "                                Scanner" +
-                           "                                  " +
+                           "          Scanner" +
+                           "          " +
                            "                                  ");
         scannerTab.setContent(scannerPane);
         tabPane.getTabs().add(scannerTab);
@@ -55,14 +55,14 @@ public class PortScanner extends Application {
         Tab monitorTab = new Tab();
         monitorTab.setClosable(false);
         monitorTab.setText("                                  " +
-                           "                                Monitor" +
-                           "                                  " +
+                           "          Monitor" +
+                           "          " +
                            "                                  ");
         monitorTab.setContent(monitorPane);
         tabPane.getTabs().add(monitorTab);
         
         //Scene
-        Scene scene = new Scene(new VBox(), 1007, 800);
+        Scene scene = new Scene(new VBox(), 1000, 800);
         ((VBox) scene.getRoot()).getChildren().addAll(vbox, psMenu, tabPane, monitorPane, scannerPane);
         
         primaryStage.setTitle("WatchTower v 0.1");
