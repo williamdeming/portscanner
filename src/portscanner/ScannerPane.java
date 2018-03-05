@@ -49,7 +49,6 @@ public class ScannerPane extends GridPane{
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null){
-                System.out.println(line);
                 networkText.appendText(line + "\n");
             }
         } catch(Exception ex){
@@ -90,22 +89,8 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Beginning scan...");
-                String[] command = {"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", "10.0.8.23"};
-                ProcessBuilder pb = new ProcessBuilder(command);
-                try{
-                    Process process = pb.start();
-                    InputStream is = process.getInputStream();
-                    InputStreamReader isr = new InputStreamReader(is);
-                    BufferedReader br = new BufferedReader(isr);
-                    String line;
-                    while ((line = br.readLine()) != null){
-                        System.out.println(line);
-                        addScanOutput(line);
-                    }
-                } catch(Exception ex){
-                    System.out.println("Exception " + ex + " was caught.");
-                }
+                scanThread scanner = new scanThread();
+                scanner.start();
             }
         });
         startScanButton.setAlignment(Pos.CENTER);
@@ -157,6 +142,26 @@ public class ScannerPane extends GridPane{
         saveReportButton.setTranslateX(150);
         saveReportButton.setTranslateY(30);
         this.add(saveReportButton, 2, 4);
+    }
+    
+    public class scanThread extends Thread {
+        public void run(){
+            System.out.println("Beginning scan...");
+            String[] command = {"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", "10.0.8.11"};
+            ProcessBuilder pb = new ProcessBuilder(command);
+            try{
+                Process process = pb.start();
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line;
+                while ((line = br.readLine()) != null){
+                    scanOutputText.appendText(line + "\n");
+                }
+            } catch(Exception ex){
+                System.out.println("Exception " + ex + " was caught.");
+            }
+        }
     }
     
     public void addScanOutput(String text){

@@ -29,6 +29,9 @@ public class PortScanner extends Application {
     @Override
     public void start(Stage primaryStage) {
         
+        //Settings
+        SettingsManager settings = new SettingsManager();
+        
         //Vbox
         final VBox vbox = new VBox();
         

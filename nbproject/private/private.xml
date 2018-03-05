@@ -2,6 +2,10 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/admin/Downloads/PortScanner/src/portscanner/SettingsManager.java</file>
+            <file>file:/home/admin/Downloads/PortScanner/src/portscanner/ScannerPane.java</file>
+            <file>file:/home/admin/Downloads/PortScanner/src/portscanner/PortScanner.java</file>
+        </group>
     </open-files>
 </project-private>

@@ -24,6 +24,9 @@ import javafx.scene.text.Font;
  * @author William Deming
  */
 public class MonitorPane extends GridPane{
+    protected CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
+    protected TextArea monitorOutputText, networkText;
+    
     public MonitorPane(){
         this.setPadding(new Insets(30, 10, 30, 20));
         
@@ -31,7 +34,7 @@ public class MonitorPane extends GridPane{
         networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
-        TextArea networkText = new TextArea("ifconfig output:\n\n");
+        networkText = new TextArea("ifconfig output:\n\n");
         networkText.setFont(Font.font("Consolas", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
@@ -46,7 +49,6 @@ public class MonitorPane extends GridPane{
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null){
-                System.out.println(line);
                 networkText.appendText(line + "\n");
             }
         } catch(Exception ex){
@@ -58,12 +60,12 @@ public class MonitorPane extends GridPane{
         monitorOptionsLabel.setPadding(new Insets(40, 0, 0, 0));
         this.add(monitorOptionsLabel, 1, 3);
         
-        CheckBox monitorOptionsPChange = new CheckBox("Log Port Changes");
+        monitorOptionsPChange = new CheckBox("Log Port Changes");
         monitorOptionsPChange.setFont(Font.font("Consolas", 14));
         monitorOptionsPChange.setPadding(new Insets(0, 0, 5, 0));
         this.add(monitorOptionsPChange, 1, 4);
         
-        CheckBox monitorOptionsTimestamp = new CheckBox("Include Timestamp");
+        monitorOptionsTimestamp = new CheckBox("Include Timestamp");
         monitorOptionsTimestamp.setFont(Font.font("Consolas", 14));
         monitorOptionsTimestamp.setPadding(new Insets(0, 0, 5, 0));
         this.add(monitorOptionsTimestamp, 1, 5);
@@ -101,7 +103,7 @@ public class MonitorPane extends GridPane{
         monitorOutputLabel.setTranslateX(0);
         this.add(monitorOutputLabel, 2, 1);
         
-        TextArea monitorOutputText = new TextArea("monitor output here\n\n" +
+        monitorOutputText = new TextArea("monitor output here\n\n" +
                                               "10.20.8.21:22 open -> closed !          11:22:03 PM 2/13/2018\n" +
                                               "10.20.8.21:23 closed                    11:22:19 PM 2/13/2018\n" +
                                               "10.20.8.21:443 filtered                 11:22:30 PM 2/13/2018");
