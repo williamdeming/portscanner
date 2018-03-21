@@ -34,13 +34,13 @@ public class ScannerPane extends GridPane{
         networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
-        networkText = new TextArea("ifconfig output:\n\n");
+        networkText = new TextArea();
         networkText.setFont(Font.font("Consolas", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
         
         System.out.println("Getting network info...");
-        String[] command = {"ifconfig"};
+        String[] command = {"ip", "route"};
         ProcessBuilder pb = new ProcessBuilder(command);
         try{
             Process process = pb.start();
@@ -71,16 +71,16 @@ public class ScannerPane extends GridPane{
         this.add(scanOptionsACK, 1, 5);
         
         Button portsButton = new Button();
-        portsButton.setText("Edit Ports");
+        portsButton.setText("Edit Scan");
         portsButton.setOnAction(new EventHandler<ActionEvent>() {
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Open ports dialog");
+                System.out.println("Open edit dialog");
             }
         });
-        portsButton.setFont(Font.font("Consolas", 14));
-        portsButton.setPrefSize(120, 28);
+        portsButton.setFont(Font.font("Consolas", 18));
+        portsButton.setPrefSize(200, 50);
         this.add(portsButton, 1, 6);
         
         Button startScanButton = new Button();
@@ -90,6 +90,7 @@ public class ScannerPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 scanThread scanner = new scanThread();
+                scanner.setIP("10.0.8.11");
                 scanner.start();
             }
         });
@@ -105,7 +106,7 @@ public class ScannerPane extends GridPane{
         scanOutputLabel.setTranslateX(0);
         this.add(scanOutputLabel, 2, 1);
         
-        scanOutputText = new TextArea("scan output here\n\n");
+        scanOutputText = new TextArea();
         scanOutputText.setFont(Font.font("Consolas", 12));
         scanOutputText.setPrefSize(500, 500);
         scanOutputText.setTranslateX(0);
@@ -145,11 +146,17 @@ public class ScannerPane extends GridPane{
     }
     
     public class scanThread extends Thread {
+        private String ip;
+        
         public void run(){
-            System.out.println("Beginning scan...");
-            String[] command = {"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", "10.0.8.11"};
-            ProcessBuilder pb = new ProcessBuilder(command);
+            String[] command;
+            ProcessBuilder pb = new ProcessBuilder();
+            if(scanOptionsSYN.isSelected() == true){
+                command = new String[]{"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", ip};
+                pb = new ProcessBuilder(command);
+            }
             try{
+                System.out.println("Beginning scan...");
                 Process process = pb.start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
@@ -161,6 +168,14 @@ public class ScannerPane extends GridPane{
             } catch(Exception ex){
                 System.out.println("Exception " + ex + " was caught.");
             }
+        }
+        
+        public String getIP(){
+            return ip;
+        }
+        
+        public void setIP(String address){
+            ip = address;
         }
     }
     

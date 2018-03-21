@@ -16,10 +16,11 @@ import java.io.InputStreamReader;
  */
 public class SettingsManager {
     public SettingsManager(){
-        File conf = new File("watchtower.conf");
-        if(conf.exists() == false){
-            System.out.println("Creating configuration file...");
-            String[] command = {"touch", "/home/admin/Downloads/PortScanner/watchtower.conf"};
+        File addresses = new File("addresses");
+        File settings = new File("settings");
+        if(addresses.exists() == false || settings.exists() == false){
+            System.out.println("Creating config files");
+            String[] command = {"/home/admin/Downloads/PortScanner/create-settings.sh"};
             ProcessBuilder pb = new ProcessBuilder(command);
             try{
                 pb.start();

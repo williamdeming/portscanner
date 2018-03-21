@@ -34,13 +34,13 @@ public class MonitorPane extends GridPane{
         networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
-        networkText = new TextArea("ifconfig output:\n\n");
+        networkText = new TextArea();
         networkText.setFont(Font.font("Consolas", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
         
         System.out.println("Getting network info...");
-        String[] command = {"ifconfig"};
+        String[] command = {"ip", "route"};
         ProcessBuilder pb = new ProcessBuilder(command);
         try{
             Process process = pb.start();
@@ -95,7 +95,7 @@ public class MonitorPane extends GridPane{
         stopButton.setAlignment(Pos.CENTER);
         stopButton.setFont(Font.font("Consolas", 18));
         stopButton.setPrefSize(200, 50);
-        stopButton.setTranslateY(10);
+        //stopButton.setTranslateY(10);
         this.add(stopButton, 1, 7);
         
         Label monitorOutputLabel = new Label("Monitor Output:");
@@ -103,10 +103,7 @@ public class MonitorPane extends GridPane{
         monitorOutputLabel.setTranslateX(0);
         this.add(monitorOutputLabel, 2, 1);
         
-        monitorOutputText = new TextArea("monitor output here\n\n" +
-                                              "10.20.8.21:22 open -> closed !          11:22:03 PM 2/13/2018\n" +
-                                              "10.20.8.21:23 closed                    11:22:19 PM 2/13/2018\n" +
-                                              "10.20.8.21:443 filtered                 11:22:30 PM 2/13/2018");
+        monitorOutputText = new TextArea();
         monitorOutputText.setFont(Font.font("Consolas", 12));
         monitorOutputText.setPrefSize(500, 500);
         monitorOutputText.setTranslateX(0);
