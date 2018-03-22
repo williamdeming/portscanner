@@ -16,17 +16,26 @@ import java.io.InputStreamReader;
  */
 public class SettingsManager {
     public SettingsManager(){
-        File addresses = new File("addresses");
-        File settings = new File("settings");
+        File addresses = new File("/home/admin/Downloads/PortScanner/addresses");
+        File settings = new File("/home/admin/Downloads/PortScanner/settings");
         if(addresses.exists() == false || settings.exists() == false){
             System.out.println("Creating config files");
-            String[] command = {"/home/admin/Downloads/PortScanner/create-settings.sh"};
-            ProcessBuilder pb = new ProcessBuilder(command);
+            initThread init = new initThread();
+            init.start();
+        }
+    }
+    
+    public class initThread extends Thread {
+        public void run(){
+            String[] command;
+            ProcessBuilder pb = new ProcessBuilder();
+            command = new String[]{"sh", "/home/admin/Downloads/PortScanner/src/portscanner/utils/init-settings.sh"};
+            pb = new ProcessBuilder(command);
             try{
                 pb.start();
             } catch(Exception ex){
                 System.out.println("Exception " + ex + " was caught.");
             }
         }
-    }
+    }    
 }

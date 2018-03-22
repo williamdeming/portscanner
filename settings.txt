@@ -1,0 +1,3 @@
+PSentry User Settings
+Always check ports: 21:closed, 22:closed, 23:closed, 25:closed, 53:closed, 80:closed, 443:closed
+
