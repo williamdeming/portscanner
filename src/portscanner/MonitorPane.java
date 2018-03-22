@@ -24,8 +24,8 @@ import javafx.scene.text.Font;
  * @author William Deming
  */
 public class MonitorPane extends GridPane{
-    protected CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
-    protected TextArea monitorOutputText, networkText;
+    private CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
+    private TextArea monitorOutputText, networkText;
     
     public MonitorPane(){
         this.setPadding(new Insets(30, 10, 30, 20));

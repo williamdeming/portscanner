@@ -9,33 +9,38 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import portscanner.entities.CommandThread;
+
+import portscanner.entities.Port;
 
 /**
  *
  * @author William Deming
  */
 public class SettingsManager {
+    private ArrayList<String> addresses = new ArrayList<String>();
+    private ArrayList<Port> ports = new ArrayList<Port>();
+    
     public SettingsManager(){
-        File addresses = new File("/home/admin/Downloads/PortScanner/addresses");
-        File settings = new File("/home/admin/Downloads/PortScanner/settings");
-        if(addresses.exists() == false || settings.exists() == false){
+        initializeSettings();
+    }
+    
+    public void initializeSettings(){
+        File addressesFile = new File("/home/admin/Downloads/PortScanner/addresses");
+        File settingsFile = new File("/home/admin/Downloads/PortScanner/settings");
+        if(addressesFile.exists() == false || settingsFile.exists() == false){
             System.out.println("Creating config files");
-            initThread init = new initThread();
+            CommandThread init = new CommandThread(new String[]{"sh", "/home/admin/Downloads/PortScanner/src/portscanner/utils/init-settings.sh"});
             init.start();
         }
     }
-    
-    public class initThread extends Thread {
-        public void run(){
-            String[] command;
-            ProcessBuilder pb = new ProcessBuilder();
-            command = new String[]{"sh", "/home/admin/Downloads/PortScanner/src/portscanner/utils/init-settings.sh"};
-            pb = new ProcessBuilder(command);
-            try{
-                pb.start();
-            } catch(Exception ex){
-                System.out.println("Exception " + ex + " was caught.");
-            }
-        }
-    }    
+
+    public void retrieveAddresses(){
+        
+    }
+
+    public void retrievePorts(){
+        
+    } 
 }

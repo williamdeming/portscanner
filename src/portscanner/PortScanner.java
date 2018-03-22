@@ -20,6 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import portscanner.utils.NetworkUtils;
+
 /**
  *
  * @author William Deming
@@ -31,6 +33,9 @@ public class PortScanner extends Application {
         
         //Settings
         SettingsManager settings = new SettingsManager();
+        
+        //NetworkUtil
+        NetworkUtils netUtils = new NetworkUtils();
         
         //Vbox
         final VBox vbox = new VBox();
