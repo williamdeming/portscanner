@@ -215,6 +215,9 @@ main (int argc, char *argv[])
           printf ("Port %d appears to be filtered\n", ports[i]);
         }
     }
+
+   // dbPortInput(id, ports[i], status, expected_status, host, user, pass);
+
     }
   /* exit cleanly */
   libnet_destroy (l);
