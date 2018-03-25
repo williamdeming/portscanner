@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--PSentry Nodes-->
+<nodelist>
+  <node>
+    <address>10.0.8.11</address>
+    <port>
+      <number>21</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+    <port>
+      <number>22</number>
+      <expectedstatus>filtered</expectedstatus>
+    </port>
+    <port>
+      <number>23</number>
+      <expectedstatus>open</expectedstatus>
+    </port>
+    <port>
+      <number>1000</number>
+      <expectedstatus>filtered</expectedstatus>
+    </port>
+  </node>
+</nodelist>

@@ -38,8 +38,7 @@ public class ScannerPane extends GridPane{
         networkText.setFont(Font.font("Consolas", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
-        
-        System.out.println("Getting network info...");
+
         String[] command = {"ip", "route"};
         ProcessBuilder pb = new ProcessBuilder(command);
         try{

@@ -39,7 +39,6 @@ public class MonitorPane extends GridPane{
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
         
-        System.out.println("Getting network info...");
         String[] command = {"ip", "route"};
         ProcessBuilder pb = new ProcessBuilder(command);
         try{
