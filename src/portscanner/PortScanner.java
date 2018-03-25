@@ -20,6 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import portscanner.utils.NetworkUtils;
+
 /**
  *
  * @author William Deming
@@ -31,6 +33,9 @@ public class PortScanner extends Application {
         
         //Settings
         SettingsManager settings = new SettingsManager();
+        
+        //NetworkUtil
+        NetworkUtils netUtils = new NetworkUtils();
         
         //Vbox
         final VBox vbox = new VBox();
@@ -68,7 +73,7 @@ public class PortScanner extends Application {
         Scene scene = new Scene(new VBox(), 1000, 800);
         ((VBox) scene.getRoot()).getChildren().addAll(vbox, psMenu, tabPane, monitorPane, scannerPane);
         
-        primaryStage.setTitle("WatchTower v 0.1");
+        primaryStage.setTitle("PSentry");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

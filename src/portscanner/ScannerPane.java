@@ -24,8 +24,8 @@ import javafx.scene.text.Font;
  * @author William Deming
  */
 public class ScannerPane extends GridPane{
-    protected CheckBox scanOptionsSYN, scanOptionsACK;
-    protected TextArea networkText, scanOutputText;
+    private CheckBox scanOptionsSYN, scanOptionsACK;
+    private TextArea networkText, scanOutputText;
     
     public ScannerPane(){
         this.setPadding(new Insets(30, 10, 30, 20));
@@ -38,8 +38,7 @@ public class ScannerPane extends GridPane{
         networkText.setFont(Font.font("Consolas", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
-        
-        System.out.println("Getting network info...");
+
         String[] command = {"ip", "route"};
         ProcessBuilder pb = new ProcessBuilder(command);
         try{
@@ -145,6 +144,10 @@ public class ScannerPane extends GridPane{
         this.add(saveReportButton, 2, 4);
     }
     
+    public void addScanOutput(String text){
+        scanOutputText.appendText(text + "\n");
+    }
+    
     public class scanThread extends Thread {
         private String ip;
         
@@ -177,9 +180,5 @@ public class ScannerPane extends GridPane{
         public void setIP(String address){
             ip = address;
         }
-    }
-    
-    public void addScanOutput(String text){
-        scanOutputText.appendText(text + "\n");
     }
 }
