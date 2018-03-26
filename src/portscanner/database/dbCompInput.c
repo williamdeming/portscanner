@@ -37,3 +37,15 @@ void dbCompInput(char *ip, char *network, char *host, char *user, char *pass)
   printf("===============Database updated.===============");
   mysql_close(con);
 }
+
+int main(int argc, char *argv[])
+{
+  char *ip = "10.0.3.14";
+  char *network = "testing";
+  char *host = "localhost";
+  char *user = "root";
+  char *pass = "pass1";
+
+  dbCompInput(ip, network, host, user, pass);
+  return 0;
+}
