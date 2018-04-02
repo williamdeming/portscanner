@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="PortScanner.jar" size="51289" download="eager" />
+    <jar href="PortScanner.jar" size="52148" download="eager" />
     <jar href="lib/mysql-connector-java-5.1.46.jar" size="1004838" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="PortScanner" >

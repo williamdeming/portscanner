@@ -16,12 +16,36 @@ import portscanner.utils.DatabaseUtils;
 public class MonitorThread extends Thread{
     private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     
-    private ArrayList<NetworkNode> networkNodes = new ArrayList<NetworkNode>();
+    private ArrayList<NetworkNode> networkNodes = null;
     
     public MonitorThread(){
+        
     }
     
     public void run(){
-        dbUtils.checkDatabase();
-    }    
+        String ip = null;
+        
+        try{
+        
+            //Ensure database and tables have been created
+            dbUtils.checkDatabase();
+        
+            //Get all computers and their ports from database
+            networkNodes = dbUtils.getAll();
+        
+            //Loop through until interrupted
+            while(!Thread.currentThread().isInterrupted()){
+                for(int i = 0; i < networkNodes.size(); i++){
+                    ip = networkNodes.get(i).getAddress();
+                    System.out.println("IM WORKIN OVER HERE");
+                    sleep(1000);
+                }
+            }
+            
+        }catch (Exception e){
+            System.out.println(e);          
+        }
+    }
+    
+    public void cancel() { interrupt(); }
 }

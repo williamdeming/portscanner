@@ -109,6 +109,25 @@ public class DatabaseUtils {
         return exists;        
     }
 
+    //Returns all computers, with all their ports, from database
+    public ArrayList<NetworkNode> getAll(){
+        ArrayList<NetworkNode> computers = new ArrayList<NetworkNode>();
+        NetworkNode currentComputer = null;
+        String ip = null;
+        String network = null;
+        
+        //Step 1 - get all computers
+        computers = getAllComputers();
+        
+        //Step 2 - get all ports for each computer
+        for(int i = 0; i < computers.size(); i++){
+            currentComputer = computers.get(i);
+            currentComputer.setPorts(getAllPorts(currentComputer.getAddress()));
+        }
+        
+        return computers;
+    }       
+    
     //Returns all computers from the computers table
     public ArrayList<NetworkNode> getAllComputers(){
         ArrayList<NetworkNode> computers = new ArrayList<NetworkNode>();
@@ -154,7 +173,7 @@ public class DatabaseUtils {
             String query = "SELECT * FROM ports WHERE ip = ?";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString (1, ip);
-            ResultSet rs = ps.executeQuery(query);
+            ResultSet rs = ps.executeQuery();
       
             // iterate through the java resultset
             while (rs.next()){
