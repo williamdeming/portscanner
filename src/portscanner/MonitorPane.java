@@ -34,7 +34,7 @@ public class MonitorPane extends GridPane{
         this.monitor = monitor;
     }
     
-    private DatabaseUtils dbUtils = new DatabaseUtils();
+    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     
     private CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
     private TextArea monitorOutputText, databaseText;

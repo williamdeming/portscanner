@@ -16,20 +16,27 @@ import portscanner.entities.Port;
  * @author William Deming
  */
 public class DatabaseUtils {
-    public DatabaseUtils(){
-        
+    String user, password;
+    
+    public DatabaseUtils(String user, String password){
+        this.user = user;
+        this.password = password;
     }
+    
+    public void updateDatabaseFromXML(ArrayList<NetworkNode> nodes){
+        
+    }    
     
     public void checkDatabase(){
         try{
             System.out.println("Checking if database exists...");
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/?user=root&password=Default1!");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/?user=" + user + "&password=" + password + "&useSSL=false");
             Statement st = connection.createStatement();
             st.executeUpdate("CREATE DATABASE IF NOT EXISTS portscan;");
             connection.close();
             
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=root&password=Default1!");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             st = connection.createStatement();
             st.executeUpdate("CREATE TABLE IF NOT EXISTS computers(id INT unsigned AUTO_INCREMENT, ip VARCHAR(15), network VARCHAR(20), PRIMARY KEY (id))");
             st.executeUpdate("CREATE TABLE IF NOT EXISTS ports(ip VARCHAR(15), port INT(7), status VARCHAR(8), expected_status VARCHAR(8))");
@@ -37,6 +44,47 @@ public class DatabaseUtils {
         }catch(Exception e){ 
             System.out.println(e);
         }
+    }
+    
+    public boolean checkIfComputerExists(String ip){
+        boolean exists = false;
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
+            String query = "SELECT * from computers WHERE ip = ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, ip);
+            ResultSet rs = ps.executeQuery();
+            if(rs.absolute(1)) {
+                exists = true;
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        
+        return exists;
+    }
+    
+    public boolean checkIfPortExists(String ip, int number){
+        boolean exists = false;
+        
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
+            String query = "SELECT * from ports WHERE ip = ? AND port = ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, ip);
+            ps.setInt(2, number);
+            ResultSet rs = ps.executeQuery();
+            if(rs.absolute(1)) {
+                exists = true;
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        
+        return exists;        
     }
 
     //Returns all computers from the computers table
@@ -49,7 +97,7 @@ public class DatabaseUtils {
             
             System.out.println("Getting computers...");
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=root&password=Default1!");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = "SELECT * FROM computers";
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(query);
@@ -80,7 +128,7 @@ public class DatabaseUtils {
             
             System.out.println("Getting ports for ip " + ip + "...");
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=root&password=Default1!");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = "SELECT * FROM ports WHERE ip = ?";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString (1, ip);
@@ -108,7 +156,7 @@ public class DatabaseUtils {
             
             System.out.println("Inserting computer...");
             Class.forName("com.mysql.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=root&password=Default1!");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = " insert into computers (ip, network)"
                     + " values (?, ?)";
             PreparedStatement ps = connection.prepareStatement(query);
@@ -127,7 +175,7 @@ public class DatabaseUtils {
         try{
             
             System.out.println("Inserting port...");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=root&password=Default1!");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = " insert into ports (ip, port, status, expected_status)"
                     + " values (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(query);
@@ -148,7 +196,7 @@ public class DatabaseUtils {
         try{
             
             System.out.println("Updating port status...");
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=root&password=Default1!");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = "update ports set status = ? where ip = ?";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString (1, status);
@@ -159,29 +207,5 @@ public class DatabaseUtils {
         }catch(Exception e){ 
             System.out.println(e);
         }
-    }
-    
-    public void testAddComputers(){
-        insertComputer("10.0.8.11", "Network A");
-        insertComputer("10.0.8.12", "Network A");
-        insertComputer("10.0.200.220", "Network B");
-        insertComputer("10.0.50.30", "Network C");
-        insertComputer("10.0.50.32", "Network C");
-        insertComputer("10.0.50.33", "Network C");
-        insertComputer("10.0.50.37", "Network C");
-        
-    }
-    
-    public void testAddPorts(){
-        insertPort("10.0.8.11", 21, "closed", "closed");
-        insertPort("10.0.8.11", 22, "closed", "closed");
-        insertPort("10.0.8.11", 23, "open", "closed");
-        insertPort("10.0.8.12", 79, "closed", "closed");
-        insertPort("10.0.8.12", 80, "filtered", "closed");
-        insertPort("10.0.50.30", 21, "closed", "closed");
-        insertPort("10.0.50.30", 22, "closed", "closed");
-        insertPort("10.0.50.30", 23, "closed", "open");
-        insertPort("10.0.50.30", 100, "filtered", "filtered");
-        insertPort("10.0.50.30", 443, "open", "open");
     }
 }

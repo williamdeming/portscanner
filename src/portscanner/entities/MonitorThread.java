@@ -14,12 +14,11 @@ import portscanner.utils.DatabaseUtils;
  * @author William Deming
  */
 public class MonitorThread extends Thread{
-    private DatabaseUtils dbUtils = new DatabaseUtils();
+    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     
     private ArrayList<NetworkNode> networkNodes = new ArrayList<NetworkNode>();
     
-    public MonitorThread(ArrayList<NetworkNode> nodes){
-        networkNodes = nodes;
+    public MonitorThread(){
     }
     
     public void run(){

@@ -5,6 +5,7 @@
  */
 package portscanner;
 
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -12,13 +13,21 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import portscanner.entities.NetworkNode;
+import portscanner.utils.DatabaseUtils;
 
 /**
  *
  * @author William Deming
  */
 public class PSMenu extends MenuBar{
-    public PSMenu(){
+    DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
+    
+    ArrayList<NetworkNode> nodes = new ArrayList<NetworkNode>();
+    
+    public PSMenu(ArrayList<NetworkNode> nodes){
+        this.nodes = nodes;
+        
         Menu menuPresets = new Menu("Presets");
         MenuItem viewPresets = new MenuItem("View Presets",
             new ImageView(new Image("resources/images/viewpresets.png")));
@@ -38,6 +47,16 @@ public class PSMenu extends MenuBar{
             }
         });
         menuEmail.getItems().addAll(emailGroup);
+        
+        Menu menuDatabase = new Menu("Database");
+        MenuItem database = new MenuItem("Update Database (XML)",
+            new ImageView(new Image("resources/images/database.png")));
+        emailGroup.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                
+            }
+        });
+        menuDatabase.getItems().addAll(database);        
         
         Menu menuSettings = new Menu("Settings");
         MenuItem editSettings = new MenuItem("Edit Settings",
@@ -59,6 +78,6 @@ public class PSMenu extends MenuBar{
         });
         menuHelp.getItems().addAll(getHelp);
         
-        this.getMenus().addAll(menuPresets, menuEmail, menuSettings, menuHelp);
+        this.getMenus().addAll(menuPresets, menuEmail, menuDatabase, menuSettings, menuHelp);
     }
 }
