@@ -2,17 +2,17 @@
 <!--PSentry Nodes-->
 <nodelist>
   <node>
-    <address>10.0.8.11</address>
+    <address>10.0.20.21</address>
     <port>
-      <number>21</number>
+      <number>200</number>
       <expectedstatus>closed</expectedstatus>
     </port>
     <port>
-      <number>22</number>
+      <number>201</number>
       <expectedstatus>filtered</expectedstatus>
     </port>
     <port>
-      <number>23</number>
+      <number>202</number>
       <expectedstatus>open</expectedstatus>
     </port>
     <port>

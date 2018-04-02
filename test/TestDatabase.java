@@ -12,7 +12,14 @@ import portscanner.utils.DatabaseUtils;
  * @author William Deming
  */
 public class TestDatabase {
-    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
+    private static DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
+    
+    public static void main(String args[]){
+        dbUtils.checkDatabase();
+        TestDatabase tdb = new TestDatabase();
+        tdb.AddComputers();
+        tdb.AddPorts();
+    }
     
     public void AddComputers(){
         dbUtils.insertComputer("10.0.8.11", "Network A");

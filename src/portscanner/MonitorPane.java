@@ -38,6 +38,7 @@ public class MonitorPane extends GridPane{
     
     private CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
     private TextArea monitorOutputText, databaseText;
+    public String spacing;
     
     public MonitorPane(){
         this.setPadding(new Insets(30, 10, 30, 20));
@@ -54,7 +55,12 @@ public class MonitorPane extends GridPane{
         ArrayList<NetworkNode> computers = dbUtils.getAllComputers();
         if(computers.size() > 0){
             for(int i = 0; i < computers.size(); i++){
-                databaseText.appendText(computers.get(i).getAddress() + "\t\t" + 
+                if(computers.get(i).getAddress().length() >= 10){
+                    spacing = "\t\t\t";
+                }else{
+                    spacing = "\t\t\t\t";
+                }
+                databaseText.appendText(computers.get(i).getAddress() + spacing + 
                                         computers.get(i).getNetwork() + "\n");
             }
         }

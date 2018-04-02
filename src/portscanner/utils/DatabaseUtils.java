@@ -23,10 +23,30 @@ public class DatabaseUtils {
         this.password = password;
     }
     
+    //Update the database from values entered into the xml settings file
     public void updateDatabaseFromXML(ArrayList<NetworkNode> nodes){
+        ArrayList<Port> ports;
+        Port currentPort;
         
+        for(int i = 0; i < nodes.size(); i++){
+            ports = nodes.get(i).getPorts();
+            for(int j = 0; j < ports.size(); j++){
+                currentPort = ports.get(j);
+                
+                //Check if current port is already in database before inserting
+                if(checkIfPortExists(nodes.get(i).getAddress(), currentPort.getNumber()) == false){
+                    insertPort(nodes.get(i).getAddress(), currentPort.getNumber(), null, currentPort.getExpectedStatus());
+                }
+            }
+            
+            //Check if the current computer is already in the database before inserting
+            if(checkIfComputerExists(nodes.get(i).getAddress()) == false){
+                insertComputer(nodes.get(i).getAddress(), null);
+            }
+        }
     }    
     
+    //Check if portscan database, computers and ports tables have been created yet
     public void checkDatabase(){
         try{
             System.out.println("Checking if database exists...");
@@ -46,6 +66,7 @@ public class DatabaseUtils {
         }
     }
     
+    //Check if a given computer exists already
     public boolean checkIfComputerExists(String ip){
         boolean exists = false;
         
@@ -66,6 +87,7 @@ public class DatabaseUtils {
         return exists;
     }
     
+    //Check if a given port exists already
     public boolean checkIfPortExists(String ip, int number){
         boolean exists = false;
         

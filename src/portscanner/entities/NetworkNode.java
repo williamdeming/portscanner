@@ -13,7 +13,8 @@ import java.util.ArrayList;
  */
 public class NetworkNode {
     private ArrayList<Port> ports = new ArrayList<Port>();
-    private String address, network;
+    private String address = null; 
+    private String network = null;
     
     public NetworkNode(ArrayList<Port> ports, String address){
         this.ports = ports;

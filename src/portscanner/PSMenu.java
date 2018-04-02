@@ -38,6 +38,16 @@ public class PSMenu extends MenuBar{
         });
         menuPresets.getItems().addAll(viewPresets);
         
+        Menu menuDatabase = new Menu("Database");
+        MenuItem database = new MenuItem("Update Database (XML)",
+            new ImageView(new Image("resources/images/database.png")));
+        database.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+                dbUtils.updateDatabaseFromXML(nodes);
+            }
+        });
+        menuDatabase.getItems().addAll(database);             
+        
         Menu menuEmail = new Menu("Email");
         MenuItem emailGroup = new MenuItem("Email Group",
             new ImageView(new Image("resources/images/emailgroup.png")));
@@ -46,17 +56,7 @@ public class PSMenu extends MenuBar{
                 
             }
         });
-        menuEmail.getItems().addAll(emailGroup);
-        
-        Menu menuDatabase = new Menu("Database");
-        MenuItem database = new MenuItem("Update Database (XML)",
-            new ImageView(new Image("resources/images/database.png")));
-        emailGroup.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent t) {
-                
-            }
-        });
-        menuDatabase.getItems().addAll(database);        
+        menuEmail.getItems().addAll(emailGroup);   
         
         Menu menuSettings = new Menu("Settings");
         MenuItem editSettings = new MenuItem("Edit Settings",
@@ -78,6 +78,6 @@ public class PSMenu extends MenuBar{
         });
         menuHelp.getItems().addAll(getHelp);
         
-        this.getMenus().addAll(menuPresets, menuEmail, menuDatabase, menuSettings, menuHelp);
+        this.getMenus().addAll(menuPresets, menuDatabase, menuEmail, menuSettings, menuHelp);
     }
 }
