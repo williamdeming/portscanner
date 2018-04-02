@@ -23,7 +23,7 @@ void dbFilterPort(int id, char *host, char *user, char *pass)
     exit(1);
   }
 
-  mysql_query(con, "CREATE DATABASE IF NOT EXIST portscan");
+  mysql_query(con, "CREATE DATABASE IF NOT EXISTS portscan;");
 
   mysql_query(con, "USE portscan");
 

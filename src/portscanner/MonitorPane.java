@@ -18,12 +18,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import portscanner.entities.MonitorThread;
 
 /**
  *
  * @author William Deming
  */
 public class MonitorPane extends GridPane{
+    private MonitorThread monitor; 
+
+    public void setMonitor(MonitorThread monitor) {
+        this.monitor = monitor;
+    }
+    
     private CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
     private TextArea monitorOutputText, networkText;
     
@@ -76,6 +83,7 @@ public class MonitorPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Starting monitor...");
+                monitor.start();
             }
         });
         startButton.setFont(Font.font("Consolas", 18));

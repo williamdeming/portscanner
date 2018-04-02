@@ -4,7 +4,7 @@
 
 void dbCompInput(char *ip, char *network, char *host, char *user, char *pass)
 {
-  printf("===============Inputting computer to database...===============");
+  printf("===============Inputting computer to database...===============\n");
   MYSQL *con = mysql_init(NULL);
   char buffer[100];
 
@@ -34,6 +34,18 @@ void dbCompInput(char *ip, char *network, char *host, char *user, char *pass)
   sprintf(buffer, "INSERT INTO computers(%s, %s)", ip, network);
   mysql_query(con, buffer);
 
-  printf("===============Database updated.===============");
+  printf("===============Database updated.===============\n");
   mysql_close(con);
+}
+
+int main(int argc, char *argv[])
+{
+  char *ip = "10.0.3.14";
+  char *network = "testing";
+  char *host = "localhost";
+  char *user = "root";
+  char *pass = "Default1!";
+
+  dbCompInput(ip, network, host, user, pass);
+  return 0;
 }

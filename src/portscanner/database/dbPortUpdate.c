@@ -23,7 +23,7 @@ void dbPortUpdate(int id, int port, int expected_status, char *host, char *user,
     exit(1);
   }
 
-  mysql_query(con, "CREATE DATABASE IF NOT EXIST portscan");
+  mysql_query(con, "CREATE DATABASE IF NOT EXISTS portscan");
 
   mysql_query(con, "USE portscan");
 
