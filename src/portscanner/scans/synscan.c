@@ -4,6 +4,7 @@
 #include <time.h>
 #include <libnet.h>
 #include <pcap.h>
+#include <string.h>
 
 /* This program runs a simple syn scan on a specified IP address */
 
@@ -17,8 +18,9 @@ int answer = 0;            /* flag for scan timeout */
 void
 usage (char *name)
 {
-  printf ("Usage: %s -i ip_address\n", name);
+  printf ("Usage: %s -i ip_address -p ports\n", name);
   printf ("    -i    IP address to scan\n");
+  printf ("    -p    Ports to scan\n");
   exit (1);
 }
 
@@ -44,6 +46,31 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
     }
 }
 
+void portStringConvert(char *portInit, int *ports)
+{
+    int size = strlen(portInit);
+    char portA[size];//char array size of char *
+    char *delim = ";";//break point in string
+    char *token = "";
+    char *a;//used only for strtol(), stores rest of string which is null in this case
+   // int ports[strlen(portInit)];
+    int i = 0; 
+    int j;
+    //before forloop
+    for (j = 0; j < size+1; j++)//converts char * into char[]
+    {
+      portA[j] = portInit[j];
+    }
+    //after forloop
+    token = strtok(portA, delim);//initial token
+    while (token != NULL)//parses through token and inputs into port array
+    {
+      ports[i] = strtol(token, &a, 10);
+      token = strtok(NULL, delim);
+      i++;
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -61,11 +88,11 @@ main (int argc, char *argv[])
   char *filter = "(tcp[13] == 0x14) || (tcp[13] == 0x12)";
   struct bpf_program fp;    			/* compiled filter */
   /* ports to scan */
-  int ports[] = { 21, 22, 23, 25, 53, 79, 80, 110, 139, 443, 445, 0 };
+  char *portInit = "";
   int i;
   time_t tv;
 
-  if (argc != 3)
+  if (argc != 5)
     usage (argv[0]);
 
   /* open context */
@@ -76,7 +103,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  while ((o = getopt (argc, argv, "i:")) > 0)
+  while ((o = getopt (argc, argv, "ip:")) > 0)
     {
       switch (o)
     {
@@ -86,6 +113,11 @@ main (int argc, char *argv[])
           fprintf (stderr, "Invalid address: %s\n", libnet_geterror (l));
           usage (argv[0]);
         }
+      break;
+    case 'p':
+      portInit = argv[5];
+      int ports[strlen(portInit)];
+      portStringConvert(portInit, ports);
       break;
     default:
       usage (argv[0]);
@@ -120,6 +152,23 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error setting nonblocking: %s\n", libpcap_errbuf);
       exit (1);
+    }
+
+  /* set the capture filter */
+  if (pcap_lookupnet (device, &netp, &maskp, libpcap_errbuf) == -1)
+    {
+      exit (1);
+    }
+
+  if ((pcap_setnonblock (handle, 1, libnet_errbuf)) == -1)
+    {
+      fprintf (stderr, "Error setting nonblocking: %s\n", libpcap_errbuf);
+      exit (1);
+    }
+
+  /* set the capture filter */
+  if (pcap_lookupnet (device, &netp, &maskp, libpcap_errbuf) == -1)
+    {
     }
 
   /* set the capture filter */
@@ -206,20 +255,3 @@ main (int argc, char *argv[])
 
       /* capture the reply */
       while (answer)
-    {
-      pcap_dispatch (handle, -1, packet_handler, NULL);
-
-      if ((time (NULL) - tv) > 2)
-        {
-          answer = 0;    /* timed out */
-          printf ("Port %d appears to be filtered\n", ports[i]);
-        }
-    }
-
-   // dbPortInput(id, ports[i], status, expected_status, host, user, pass);
-
-    }
-  /* exit cleanly */
-  libnet_destroy (l);
-  return 0;
-}
