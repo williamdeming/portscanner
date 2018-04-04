@@ -48,8 +48,6 @@ public class PortScanner extends Application {
         ScannerPane scannerPane = new ScannerPane();
         
         MonitorPane monitorPane = new MonitorPane();
-        MonitorThread monitor = new MonitorThread();
-        monitorPane.setMonitor(monitor);
         
         //Tabs
         TabPane tabPane = new TabPane();

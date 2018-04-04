@@ -155,7 +155,7 @@ public class ScannerPane extends GridPane{
             String[] command;
             ProcessBuilder pb = new ProcessBuilder();
             if(scanOptionsSYN.isSelected() == true){
-                command = new String[]{"/home/admin/Downloads/PortScanner/src/portscanner/scans/synscan", "-i", ip};
+                command = new String[]{"/home/admin/Downloads/portscanner/src/portscanner/scans/synscan", "-i", ip};
                 pb = new ProcessBuilder(command);
             }
             try{

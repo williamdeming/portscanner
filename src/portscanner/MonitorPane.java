@@ -28,11 +28,7 @@ import portscanner.utils.DatabaseUtils;
  * @author William Deming
  */
 public class MonitorPane extends GridPane{
-    private MonitorThread monitor; 
-
-    public void setMonitor(MonitorThread monitor) {
-        this.monitor = monitor;
-    }
+    private MonitorThread monitor;
     
     private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     
@@ -87,6 +83,7 @@ public class MonitorPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Starting monitor...");
+                monitor = new MonitorThread(monitorOutputText);
                 monitor.start();
             }
         });
@@ -101,6 +98,7 @@ public class MonitorPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Stopping monitor...");
+                monitor.cancel();
             }
         });
         stopButton.setAlignment(Pos.CENTER);
