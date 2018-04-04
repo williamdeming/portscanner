@@ -8,6 +8,7 @@ package portscanner;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,40 +19,50 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import portscanner.entities.MonitorThread;
+import portscanner.entities.NetworkNode;
+import portscanner.utils.DatabaseUtils;
 
 /**
  *
  * @author William Deming
  */
 public class MonitorPane extends GridPane{
+    private MonitorThread monitor; 
+
+    public void setMonitor(MonitorThread monitor) {
+        this.monitor = monitor;
+    }
+    
+    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
+    
     private CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
-    private TextArea monitorOutputText, networkText;
+    private TextArea monitorOutputText, databaseText;
+    public String spacing;
     
     public MonitorPane(){
         this.setPadding(new Insets(30, 10, 30, 20));
         
-        Label networkLabel = new Label("Network Info:");
-        networkLabel.setFont(Font.font("Consolas", 22));
-        this.add(networkLabel, 1, 1);
+        Label databaseLabel = new Label("Monitored Computers:");
+        databaseLabel.setFont(Font.font("Consolas", 22));
+        this.add(databaseLabel, 1, 1);
         
-        networkText = new TextArea();
-        networkText.setFont(Font.font("Consolas", 12));
-        networkText.setPrefSize(500, 500);
-        this.add(networkText, 1, 2);
+        databaseText = new TextArea();
+        databaseText.setFont(Font.font("Consolas", 12));
+        databaseText.setPrefSize(500, 500);
+        this.add(databaseText, 1, 2);
         
-        String[] command = {"ip", "route"};
-        ProcessBuilder pb = new ProcessBuilder(command);
-        try{
-            Process process = pb.start();
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            while ((line = br.readLine()) != null){
-                networkText.appendText(line + "\n");
+        ArrayList<NetworkNode> computers = dbUtils.getAllComputers();
+        if(computers.size() > 0){
+            for(int i = 0; i < computers.size(); i++){
+                if(computers.get(i).getAddress().length() >= 10){
+                    spacing = "\t\t\t";
+                }else{
+                    spacing = "\t\t\t\t";
+                }
+                databaseText.appendText(computers.get(i).getAddress() + spacing + 
+                                        computers.get(i).getNetwork() + "\n");
             }
-        } catch(Exception ex){
-            System.out.println("Exception " + ex + " was caught.");
         }
         
         Label monitorOptionsLabel = new Label("Monitor Options:");
@@ -76,6 +87,7 @@ public class MonitorPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Starting monitor...");
+                monitor.start();
             }
         });
         startButton.setFont(Font.font("Consolas", 18));

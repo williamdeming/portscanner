@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import portscanner.entities.MonitorThread;
 
 import portscanner.utils.NetworkUtils;
 
@@ -41,12 +42,14 @@ public class PortScanner extends Application {
         final VBox vbox = new VBox();
         
         //Menu
-        PSMenu psMenu = new PSMenu();
+        PSMenu psMenu = new PSMenu(settings.getNetworkNodes());
         
         //GridPanes
         ScannerPane scannerPane = new ScannerPane();
         
         MonitorPane monitorPane = new MonitorPane();
+        MonitorThread monitor = new MonitorThread();
+        monitorPane.setMonitor(monitor);
         
         //Tabs
         TabPane tabPane = new TabPane();

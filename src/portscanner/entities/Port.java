@@ -10,12 +10,27 @@ package portscanner.entities;
  * @author William Deming
  */
 public class Port {
-    private int number;
-    private String status;
+    private int number = 0;
+    private String status = null; 
+    private String expected_status = null;
     
-    public Port(int number, String status){
+    public Port(int number, String expected_status){
+        this.number = number;
+        this.expected_status = expected_status;
+    }
+    
+    public Port(int number, String status, String expected_status){
         this.number = number;
         this.status = status;
+        this.expected_status = expected_status;
+    }
+
+    public String getExpectedStatus() {
+        return expected_status;
+    }
+
+    public void setExpectedStatus(String expected_status) {
+        this.expected_status = expected_status;
     }
     
     public int getNumber(){

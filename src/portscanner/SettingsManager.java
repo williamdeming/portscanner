@@ -107,4 +107,12 @@ public class SettingsManager {
             networkNodes.get(i).printContents();
         }
     }
+    
+    public ArrayList<NetworkNode> getNetworkNodes() {
+        return networkNodes;
+    }
+
+    public void setNetworkNodes(ArrayList<NetworkNode> networkNodes) {
+        this.networkNodes = networkNodes;
+    }
 }

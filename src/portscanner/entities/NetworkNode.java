@@ -13,11 +13,17 @@ import java.util.ArrayList;
  */
 public class NetworkNode {
     private ArrayList<Port> ports = new ArrayList<Port>();
-    private String address;
+    private String address = null; 
+    private String network = null;
     
     public NetworkNode(ArrayList<Port> ports, String address){
         this.ports = ports;
         this.address = address;
+    }
+    
+    public NetworkNode(String address, String network){
+        this.address = address;
+        this.network = network;
     }
     
     public ArrayList<Port> getPorts(){
@@ -34,6 +40,14 @@ public class NetworkNode {
     
     public void setAddress(String address){
         this.address = address;
+    }
+    
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
     }
    
     public void printContents(){
