@@ -20,7 +20,7 @@ usage (char *name)
 {
   printf ("Usage: %s -i ip_address -p ports\n", name);
   printf ("    -i    IP address to scan\n");
-  printf ("    -p    Ports to scan\n");
+  printf ("    -p    Ports to check\n");
   exit (1);
 }
 
@@ -88,9 +88,11 @@ main (int argc, char *argv[])
   char *filter = "(tcp[13] == 0x14) || (tcp[13] == 0x12)";
   struct bpf_program fp;    			/* compiled filter */
   /* ports to scan */
-  char *portInit = "";
+  char *portInit = argv[4];
+  int ports[strlen(portInit)];
   int i;
   time_t tv;
+
 
   if (argc != 5)
     usage (argv[0]);
@@ -115,10 +117,12 @@ main (int argc, char *argv[])
         }
       break;
     case 'p':
-      portInit = argv[5];
-      int ports[strlen(portInit)];
-      portStringConvert(portInit, ports);
-      break;
+       if (portInit == NULL)
+       {
+         printf ("Must enter ports");
+         usage (argv[0]);
+       }
+       portStringConvert(portInit, ports);
     default:
       usage (argv[0]);
       break;
@@ -152,23 +156,6 @@ main (int argc, char *argv[])
     {
       fprintf (stderr, "Error setting nonblocking: %s\n", libpcap_errbuf);
       exit (1);
-    }
-
-  /* set the capture filter */
-  if (pcap_lookupnet (device, &netp, &maskp, libpcap_errbuf) == -1)
-    {
-      exit (1);
-    }
-
-  if ((pcap_setnonblock (handle, 1, libnet_errbuf)) == -1)
-    {
-      fprintf (stderr, "Error setting nonblocking: %s\n", libpcap_errbuf);
-      exit (1);
-    }
-
-  /* set the capture filter */
-  if (pcap_lookupnet (device, &netp, &maskp, libpcap_errbuf) == -1)
-    {
     }
 
   /* set the capture filter */
@@ -255,3 +242,20 @@ main (int argc, char *argv[])
 
       /* capture the reply */
       while (answer)
+    {
+      pcap_dispatch (handle, -1, packet_handler, NULL);
+
+      if ((time (NULL) - tv) > 2)
+        {
+          answer = 0;    /* timed out */
+          printf ("Port %d appears to be filtered\n", ports[i]);
+        }
+    }
+
+   // dbPortInput(id, ports[i], status, expected_status, host, user, pass);
+
+    }
+  /* exit cleanly */
+  libnet_destroy (l);
+  return 0;
+}
