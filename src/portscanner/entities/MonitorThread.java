@@ -24,23 +24,36 @@ public class MonitorThread extends Thread{
     private ArrayList<NetworkNode> networkNodes = null;
     private TextArea monitorOutputText;
     
-    final String[] output = new String[1];
+    //Used for getting output from scanthread
+    final String output[] = new String[1];
     
     public MonitorThread(TextArea monitorOutputText){
         this.monitorOutputText = monitorOutputText;
     }
     
     public void run(){
-        ArrayList<Port> ports = null;
         
-        String[] command = new String[5];
-        command[0] = "\"/home/admin/Downloads/portscanner/src/portscanner/scans/synscan\"";
+        //Used for comparison of database ports and scan output
+        ArrayList<Port> ports = new ArrayList<Port>();
+        ArrayList<Port> outputPorts = new ArrayList<Port>();
+        
+        //Command string that starts our scan thread
+        String command[] = new String[5];
+        command[0] = "/home/admin/Downloads/portscanner/src/portscanner/scans/synscan";
         command[1] = "-i";
         command[3] = "-p";
         
+        //Used for parsing scan output into array of lines
+        String outputLines[] = null;
+        
+        //Used for iterations
         int runs = 0;
+        Port currentPort = new Port();
+        int currentPortNumber = 0;
+        String currentPortStatus = null;
         String ip = null;
         String portString = null;
+        String spacing = null;
         
         try{
         
@@ -55,13 +68,14 @@ public class MonitorThread extends Thread{
                 for(int i = 0; i < networkNodes.size(); i++){
                     ip = networkNodes.get(i).getAddress();
                     ports = networkNodes.get(i).getPorts();
+                    System.out.println("\nMonitor Output" + "\t\tComputer " + ip);
                     
                     //Assemble ports for current computer into string
                     for(int j = 0; j < ports.size(); j++){
                         if(j == 0){
                             portString = Integer.toString(ports.get(j).getNumber());
                         }else{
-                            portString += ";" + Integer.toString(ports.get(j).getNumber());
+                            portString += ":" + Integer.toString(ports.get(j).getNumber());
                         }
                     }
                     
@@ -85,6 +99,7 @@ public class MonitorThread extends Thread{
                                 String line;
                                 while ((line = br.readLine()) != null){
                                     output[0] += line + "\n";
+                                    //System.out.println(line);
                                 }
                             } catch(Exception ex){
                                 System.out.println("Exception " + ex + " was caught.");
@@ -98,19 +113,60 @@ public class MonitorThread extends Thread{
                     //wait for latch before collecting output
                     latch.await();
                     
-                    //1. parse output array string
+                    sleep(1000);
                     
-                    //2. compare to ports arraylist & make changes to status of ports if needed
+                    //Parse output array string
+                    outputLines = output[0].split("\\r?\\n");
                     
-                    //3. if status changes & != expected_status, send alert
-                    runs++;
-                    System.out.println("Test alert for computer " + command[2] + ", " + runs + " runs completed." + "\n");
-                    //monitorOutputText.appendText("Test alert for computer " + command[2] + ", " + runs + " runs completed." + "\n");
+                    for(int k = 0; k < ports.size(); k++){
+                        currentPort = new Port();
+                        
+                        //get port number
+                        currentPortNumber = Integer.parseInt(outputLines[k+1].replaceAll("[^0-9]", ""));
+                        
+                        //get port status
+                        currentPortStatus = outputLines[k+1].substring(outputLines[k+1].lastIndexOf(" ") + 1);
+                        
+                        if(Integer.toString(currentPortNumber).length() >= 3){
+                            spacing = "\t\t\t\t";
+                        }else{
+                            spacing = "\t\t\t\t\t";
+                        }
+                        
+                        System.out.println("Scan Output\t\tPort " + currentPortNumber + spacing + currentPortStatus);
+                        
+                        currentPort.setNumber(currentPortNumber);
+                        currentPort.setStatus(currentPortStatus);
+                        outputPorts.add(currentPort);
+                    }
                     
-                    //4. update database with status changes if there are any
-                    
+                    //Compare to ports arraylist & update status of ports if needed
+                    for(int m = 0; m < ports.size(); m++){
+                        
+                        //If the output status != expected status for this port,
+                        //then we need to send an alert to the user
+                        if(!outputPorts.get(m).getStatus().equals(ports.get(m).getExpectedStatus())){
+                            monitorOutputText.appendText("Alert!\t\t\tPort " + outputPorts.get(m).getNumber() +
+                                               " is " + outputPorts.get(m).getStatus() +
+                                               " (Expected status: " + ports.get(m).getExpectedStatus() + ")\n");
+                            
+                            System.out.println("Alert!\t\t\tPort " + outputPorts.get(m).getNumber() +
+                                               " is " + outputPorts.get(m).getStatus() +
+                                               " (Expected status: " + ports.get(m).getExpectedStatus() + ")");
+                        }
+                        
+                        //If the output status != status in database, 
+                        //then we need to update the database entry
+                        if(!outputPorts.get(m).getStatus().equals(ports.get(m).getStatus())){
+                            dbUtils.updatePortStatus(ip, outputPorts.get(m).getNumber(), outputPorts.get(m).getStatus());
+                        }
+
+                    }
                     
                     output[0] = null;
+                    runs++;
+                    System.out.println(runs + " runs completed.");
+                    //monitorOutputText.appendText("Test alert for computer " + command[2] + ", " + runs + " runs completed." + "\n");
                 }
             }
             

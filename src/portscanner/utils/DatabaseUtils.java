@@ -233,15 +233,16 @@ public class DatabaseUtils {
     }  
     
     //Updates the status of a port in the ports table
-    public void updatePortStatus(String ip, String status){
+    public void updatePortStatus(String ip, int port, String status){
         try{
             
-            System.out.println("Updating port status...");
+            System.out.println("Database Update\t\tPort " + port + " status has been updated to " + status);
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
-            String query = "update ports set status = ? where ip = ?";
+            String query = "update ports set status = ? where ip = ? and port = ?";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString (1, status);
             ps.setString (2, ip);
+            ps.setInt(3, port);
             ps.executeUpdate();
             connection.close();
             

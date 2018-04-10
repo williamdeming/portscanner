@@ -4,6 +4,7 @@
 #include <time.h>
 #include <libnet.h>
 #include <pcap.h>
+#include <string.h>
 
 /* This program runs a simple syn scan on a specified IP address */
 
@@ -17,8 +18,9 @@ int answer = 0;            /* flag for scan timeout */
 void
 usage (char *name)
 {
-  printf ("Usage: %s -i ip_address\n", name);
+  printf ("Usage: %s -i ip_address -p ports\n", name);
   printf ("    -i    IP address to scan\n");
+  printf ("    -p    Ports to check\n");
   exit (1);
 }
 
@@ -44,6 +46,31 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
     }
 }
 
+void portStringConvert(char *portInit, int *ports)
+{
+    int size = strlen(portInit);
+    char portA[size];//char array size of char *
+    char *delim = ":";//break point in string
+    char *token = "";
+    char *a;//used only for strtol(), stores rest of string which is null in this case
+   // int ports[strlen(portInit)];
+    int i = 0; 
+    int j;
+    //before forloop
+    for (j = 0; j < size+1; j++)//converts char * into char[]
+    {
+      portA[j] = portInit[j];
+    }
+    //after forloop
+    token = strtok(portA, delim);//initial token
+    while (token != NULL)//parses through token and inputs into port array
+    {
+      ports[i] = strtol(token, &a, 10);
+      token = strtok(NULL, delim);
+      i++;
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -61,11 +88,13 @@ main (int argc, char *argv[])
   char *filter = "(tcp[13] == 0x14) || (tcp[13] == 0x12)";
   struct bpf_program fp;    			/* compiled filter */
   /* ports to scan */
-  int ports[] = { 21, 22, 23, 25, 53, 79, 80, 110, 139, 443, 445, 0 };
+  char *portInit = argv[4];
+  int ports[strlen(portInit)];
   int i;
   time_t tv;
 
-  if (argc != 3)
+
+  if (argc != 5)
     usage (argv[0]);
 
   /* open context */
@@ -76,16 +105,24 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  while ((o = getopt (argc, argv, "i:")) > 0)
+  while ((o = getopt (argc, argv, "i:p:")) > 0)
     {
       switch (o)
     {
     case 'i':
       if ((ipaddr = libnet_name2addr4 (l, optarg, LIBNET_RESOLVE)) == -1)
-        {
-          fprintf (stderr, "Invalid address: %s\n", libnet_geterror (l));
-          usage (argv[0]);
-        }
+      {
+        fprintf (stderr, "Invalid address: %s\n", libnet_geterror (l));
+        usage (argv[0]);
+      }
+      break;
+    case 'p':
+      if (portInit == NULL)
+      {
+        printf ("Must enter ports");
+        usage (argv[0]);
+      }
+      portStringConvert(portInit, ports);
       break;
     default:
       usage (argv[0]);

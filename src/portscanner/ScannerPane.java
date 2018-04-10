@@ -89,7 +89,8 @@ public class ScannerPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 scanThread scanner = new scanThread();
-                scanner.setIP("10.0.8.11");
+                scanner.setIP("10.0.8.22");
+                scanner.setPortString("21:22:23:443");
                 scanner.start();
             }
         });
@@ -149,13 +150,13 @@ public class ScannerPane extends GridPane{
     }
     
     public class scanThread extends Thread {
-        private String ip;
+        private String ip, portString;
         
         public void run(){
             String[] command;
             ProcessBuilder pb = new ProcessBuilder();
             if(scanOptionsSYN.isSelected() == true){
-                command = new String[]{"/home/admin/Downloads/portscanner/src/portscanner/scans/synscan", "-i", ip};
+                command = new String[]{"/home/admin/Downloads/portscanner/src/portscanner/scans/synscan", "-i", ip, "-p", portString};
                 pb = new ProcessBuilder(command);
             }
             try{
@@ -171,6 +172,7 @@ public class ScannerPane extends GridPane{
             } catch(Exception ex){
                 System.out.println("Exception " + ex + " was caught.");
             }
+            System.out.println("Finished scan.");
         }
         
         public String getIP(){
@@ -179,6 +181,14 @@ public class ScannerPane extends GridPane{
         
         public void setIP(String address){
             ip = address;
+        }
+        
+        public String getPortString() {
+            return portString;
+        }
+
+        public void setPortString(String portString) {
+            this.portString = portString;
         }
     }
 }

@@ -34,7 +34,6 @@ public class SettingsManager {
     
     public SettingsManager(){
         initializeSettings();
-        retrieveNodes();
     }
     
     //Creates xml file for nodes if not present
@@ -94,6 +93,7 @@ public class SettingsManager {
                     //Save the port information and ip address in network node object, add to arraylist of network nodes
                     NetworkNode netNode = new NetworkNode(ports, address);
                     networkNodes.add(netNode);
+                    ports = new ArrayList<Port>();
                 }
             }
         } catch (Exception e) {
@@ -109,6 +109,7 @@ public class SettingsManager {
     }
     
     public ArrayList<NetworkNode> getNetworkNodes() {
+        retrieveNodes();
         return networkNodes;
     }
 

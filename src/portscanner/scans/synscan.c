@@ -50,7 +50,7 @@ void portStringConvert(char *portInit, int *ports)
 {
     int size = strlen(portInit);
     char portA[size];//char array size of char *
-    char *delim = ";";//break point in string
+    char *delim = ":";//break point in string
     char *token = "";
     char *a;//used only for strtol(), stores rest of string which is null in this case
    // int ports[strlen(portInit)];
@@ -105,24 +105,25 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  while ((o = getopt (argc, argv, "ip:")) > 0)
+  while ((o = getopt (argc, argv, "i:p:")) > 0)
     {
       switch (o)
     {
     case 'i':
       if ((ipaddr = libnet_name2addr4 (l, optarg, LIBNET_RESOLVE)) == -1)
-        {
-          fprintf (stderr, "Invalid address: %s\n", libnet_geterror (l));
-          usage (argv[0]);
-        }
+      {
+        fprintf (stderr, "Invalid address: %s\n", libnet_geterror (l));
+        usage (argv[0]);
+      }
       break;
     case 'p':
-       if (portInit == NULL)
-       {
-         printf ("Must enter ports");
-         usage (argv[0]);
-       }
-       portStringConvert(portInit, ports);
+      if (portInit == NULL)
+      {
+        printf ("Must enter ports");
+        usage (argv[0]);
+      }
+      portStringConvert(portInit, ports);
+      break;
     default:
       usage (argv[0]);
       break;

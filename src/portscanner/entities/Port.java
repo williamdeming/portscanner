@@ -12,18 +12,25 @@ package portscanner.entities;
 public class Port {
     private int number = 0;
     private String status = null; 
-    private String expected_status = null;
+    private String expected_status = null;  
     
+    //Used for XML inserts
     public Port(int number, String expected_status){
         this.number = number;
         this.expected_status = expected_status;
     }
     
+    //Used for database retrieval
     public Port(int number, String status, String expected_status){
         this.number = number;
         this.status = status;
         this.expected_status = expected_status;
     }
+    
+    //Empty constructor used for everything else
+    public Port(){
+        
+    }      
 
     public String getExpectedStatus() {
         return expected_status;
