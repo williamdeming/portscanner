@@ -59,6 +59,7 @@ public class DatabaseUtils {
             connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             st = connection.createStatement();
             st.executeUpdate("CREATE TABLE IF NOT EXISTS computers(id INT unsigned AUTO_INCREMENT, ip VARCHAR(15), network VARCHAR(20), PRIMARY KEY (id))");
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS emailgroup(id INT unsigned AUTO_INCREMENT, email VARCHAR(60), PRIMARY KEY (id))");
             st.executeUpdate("CREATE TABLE IF NOT EXISTS ports(ip VARCHAR(15), port INT(7), status VARCHAR(8), expected_status VARCHAR(8))");
             connection.close();
         }catch(Exception e){ 
@@ -217,6 +218,25 @@ public class DatabaseUtils {
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setString (1, ip);
             ps.setString (2, network);
+            ps.execute();
+            connection.close();
+            
+        }catch(Exception e){ 
+            System.out.println(e);
+        }
+    }
+    
+    //Inserts an email address into the emailgroup table
+    public void insertEmail(String email){
+        try{
+            
+            //System.out.println("Database\t\t\t---Inserting email " + email + "---");
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
+            String query = " insert into emailgroup (email)"
+                    + " values (?)";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString (1, email);
             ps.execute();
             connection.close();
             

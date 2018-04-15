@@ -39,7 +39,6 @@ and open the template in the editor.
     -fx-opacity: 0.5;
 }
 
-.menu-item {
+/*.menu-item {
     -fx-background-color: #FFE9E4;
-    -fx-max-width: 5;
-}
+}*/

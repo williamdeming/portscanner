@@ -28,12 +28,12 @@ import portscanner.utils.DatabaseUtils;
  * @author William Deming
  */
 public class MonitorPane extends GridPane{
-    private MonitorThread monitor;
-    
-    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     
     private CheckBox monitorOptionsPChange, monitorOptionsTimestamp;
+    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
+    private MonitorThread monitor;
     private TextArea monitorOutputText, databaseText;
+    public boolean monitorRunning = false;
     public String spacing;
     
     public MonitorPane(){
@@ -82,7 +82,10 @@ public class MonitorPane extends GridPane{
             public void handle(ActionEvent event) {
                 System.out.println("App\t\t\tStarting monitor");
                 monitor = new MonitorThread(monitorOutputText);
-                monitor.start();
+                if(monitorRunning == false){
+                    monitor.start();
+                    monitorRunning = true;
+                }
             }
         });
         startButton.setPrefSize(200, 50);
@@ -95,7 +98,10 @@ public class MonitorPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("App\t\t\tStopping monitor");
-                monitor.cancel();
+                if(monitorRunning == true){
+                    monitor.cancel();
+                    monitorRunning = false;
+                }
             }
         });
         stopButton.setAlignment(Pos.CENTER);
