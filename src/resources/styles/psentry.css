@@ -1,0 +1,44 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Apr 14, 2018, 8:25:54 PM
+    Author     : William Deming
+*/
+
+.root{
+    -fx-focus-color: #E1C7B8;
+    -fx-font-size: 12pt;
+    -fx-font-family: Carlito;
+    -fx-base: #FFA673;
+    -fx-background: #FAD2BA;
+}
+
+.button{
+    -fx-border-color: #FF7525;
+    -fx-border-radius: 5;
+    -fx-padding: 3 6 6 6;
+}
+
+.borders{
+    -fx-border-color: #FF7525;
+    -fx-border-style: dotted;
+    -fx-border-width: 1.5;
+    -fx-border-insets: -5;
+}
+
+.menu-bar {
+    -fx-background-color: #FFA673;
+    -fx-opacity: 0.5;
+}
+
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
+    -fx-background-color: #FF7525;
+    -fx-opacity: 0.5;
+}
+
+.menu-item {
+    -fx-background-color: #FFE9E4;
+}

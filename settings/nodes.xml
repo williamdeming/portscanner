@@ -4,39 +4,19 @@
   <node>
     <address>10.0.8.22</address>
     <port>
-      <number>21</number>
-      <expectedstatus>closed</expectedstatus>
-    </port>
-    <port>
-      <number>22</number>
-      <expectedstatus>filtered</expectedstatus>
-    </port>
-    <port>
       <number>23</number>
       <expectedstatus>open</expectedstatus>
     </port>
     <port>
       <number>443</number>
-      <expectedstatus>filtered</expectedstatus>
+      <expectedstatus>open</expectedstatus>
     </port>
   </node>
   <node>
     <address>10.0.8.23</address>
     <port>
-      <number>21</number>
-      <expectedstatus>closed</expectedstatus>
-    </port>
-    <port>
-      <number>22</number>
-      <expectedstatus>filtered</expectedstatus>
-    </port>
-    <port>
-      <number>23</number>
-      <expectedstatus>open</expectedstatus>
-    </port>
-    <port>
       <number>443</number>
-      <expectedstatus>filtered</expectedstatus>
+      <expectedstatus>closed</expectedstatus>
     </port>
   </node>
   <node>
@@ -47,23 +27,30 @@
     </port>
     <port>
       <number>22</number>
-      <expectedstatus>filtered</expectedstatus>
+      <expectedstatus>closed</expectedstatus>
     </port>
     <port>
       <number>23</number>
-      <expectedstatus>open</expectedstatus>
+      <expectedstatus>closed</expectedstatus>
     </port>
     <port>
       <number>79</number>
-      <expectedstatus>open</expectedstatus>
+      <expectedstatus>closed</expectedstatus>
     </port>
     <port>
       <number>80</number>
-      <expectedstatus>filtered</expectedstatus>
+      <expectedstatus>closed</expectedstatus>
     </port>
     <port>
       <number>443</number>
-      <expectedstatus>filtered</expectedstatus>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+  </node>
+  <node>
+    <address>10.0.8.25</address>
+    <port>
+      <number>443</number>
+      <expectedstatus>open</expectedstatus>
     </port>
   </node>
 </nodelist>

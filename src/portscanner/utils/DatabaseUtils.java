@@ -23,7 +23,7 @@ public class DatabaseUtils {
         this.password = password;
     }
     
-    //Update the database from values entered into the xml settings file
+    //Update the database from values entered into xml settings file
     public void updateDatabaseFromXML(ArrayList<NetworkNode> nodes){
         ArrayList<Port> ports;
         Port currentPort;
@@ -49,7 +49,7 @@ public class DatabaseUtils {
     //Check if portscan database, computers and ports tables have been created yet
     public void checkDatabase(){
         try{
-            System.out.println("Checking if database exists...");
+            System.out.println("Database\t\t\t---Checking if database exists---");
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/?user=" + user + "&password=" + password + "&useSSL=false");
             Statement st = connection.createStatement();
@@ -108,6 +108,20 @@ public class DatabaseUtils {
         
         return exists;        
     }
+    
+    //Drop database table for application
+    public void dropDatabase(){
+        try{
+            System.out.println("Database\t\t\t---Dropping database portscan---");
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
+            Statement st = connection.createStatement();
+            st.executeUpdate("DROP DATABASE portscan;");
+            connection.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }        
+    }    
 
     //Returns all computers, with all their ports, from database
     public ArrayList<NetworkNode> getAll(){
@@ -116,10 +130,10 @@ public class DatabaseUtils {
         String ip = null;
         String network = null;
         
-        //Step 1 - get all computers
+        //Step 1 - Get all computers
         computers = getAllComputers();
         
-        //Step 2 - get all ports for each computer
+        //Step 2 - Get all ports for each computer
         for(int i = 0; i < computers.size(); i++){
             currentComputer = computers.get(i);
             currentComputer.setPorts(getAllPorts(currentComputer.getAddress()));
@@ -136,7 +150,7 @@ public class DatabaseUtils {
         
         try{
             
-            System.out.println("Getting computers...");
+            System.out.println("Database\t\t\t---Getting computers---");
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = "SELECT * FROM computers";
@@ -167,7 +181,7 @@ public class DatabaseUtils {
         
         try{
             
-            System.out.println("Getting ports for ip " + ip + "...");
+            System.out.println("Database\t\t\t---Getting ports for ip " + ip + "---");
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = "SELECT * FROM ports WHERE ip = ?";
@@ -195,7 +209,7 @@ public class DatabaseUtils {
     public void insertComputer(String ip, String network){
         try{
             
-            System.out.println("Inserting computer...");
+            System.out.println("Database\t\t\t---Inserting computer " + ip + "---");
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = " insert into computers (ip, network)"
@@ -215,7 +229,7 @@ public class DatabaseUtils {
     public void insertPort(String ip, int port, String status, String expected_status){
         try{
             
-            System.out.println("Inserting port...");
+            System.out.println("Database\t\t\t---Inserting port " + port + "---");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = " insert into ports (ip, port, status, expected_status)"
                     + " values (?, ?, ?, ?)";
@@ -236,7 +250,7 @@ public class DatabaseUtils {
     public void updatePortStatus(String ip, int port, String status){
         try{
             
-            System.out.println("Database Update\t\tPort " + port + " status has been updated to " + status);
+            System.out.println("Database\t\t\t---Port " + port + " status updated to " + status + "---");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = "update ports set status = ? where ip = ? and port = ?";
             PreparedStatement ps = connection.prepareStatement(query);

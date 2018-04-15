@@ -31,11 +31,10 @@ public class ScannerPane extends GridPane{
         this.setPadding(new Insets(30, 10, 30, 20));
         
         Label networkLabel = new Label("Network Info:");
-        networkLabel.setFont(Font.font("Consolas", 22));
         this.add(networkLabel, 1, 1);
         
         networkText = new TextArea();
-        networkText.setFont(Font.font("Consolas", 12));
+        networkText.setFont(Font.font("Carlito", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
 
@@ -55,17 +54,14 @@ public class ScannerPane extends GridPane{
         }
         
         Label scanOptionsLabel = new Label("Scan Options:");
-        scanOptionsLabel.setFont(Font.font("Consolas", 18));
         scanOptionsLabel.setPadding(new Insets(40, 0, 0, 0));
         this.add(scanOptionsLabel, 1, 3);
         
         scanOptionsSYN = new CheckBox("SYN Scan");
-        scanOptionsSYN.setFont(Font.font("Consolas", 14));
         scanOptionsSYN.setPadding(new Insets(0, 0, 5, 0));
         this.add(scanOptionsSYN, 1, 4);
         
         scanOptionsACK = new CheckBox("ACK Scan");
-        scanOptionsACK.setFont(Font.font("Consolas", 14));
         scanOptionsACK.setPadding(new Insets(0, 0, 5, 0));
         this.add(scanOptionsACK, 1, 5);
         
@@ -75,10 +71,9 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Open edit dialog");
+                System.out.println("App\t\t\tOpen edit box");
             }
         });
-        portsButton.setFont(Font.font("Consolas", 18));
         portsButton.setPrefSize(200, 50);
         this.add(portsButton, 1, 6);
         
@@ -95,19 +90,17 @@ public class ScannerPane extends GridPane{
             }
         });
         startScanButton.setAlignment(Pos.CENTER);
-        startScanButton.setFont(Font.font("Consolas", 18));
         startScanButton.setPrefSize(200, 50);
         startScanButton.setTranslateX(0);
         startScanButton.setTranslateY(0);
         this.add(startScanButton, 1, 7);
         
         Label scanOutputLabel = new Label("Scan Output:");
-        scanOutputLabel.setFont(Font.font("Consolas", 22));
         scanOutputLabel.setTranslateX(0);
         this.add(scanOutputLabel, 2, 1);
         
         scanOutputText = new TextArea();
-        scanOutputText.setFont(Font.font("Consolas", 12));
+        scanOutputText.setFont(Font.font("Carlito", 12));
         scanOutputText.setPrefSize(500, 500);
         scanOutputText.setTranslateX(0);
         this.add(scanOutputText, 2, 2);
@@ -118,11 +111,10 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Sending report...");
+                System.out.println("App\t\t\tSending report");
             }
         });
         sendReportButton.setAlignment(Pos.CENTER);
-        sendReportButton.setFont(Font.font("Consolas", 18));
         sendReportButton.setPrefSize(200, 50);
         sendReportButton.setTranslateX(150);
         sendReportButton.setTranslateY(30);
@@ -134,11 +126,10 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Saving report...");
+                System.out.println("App\t\t\tSaving report");
             }
         });
         saveReportButton.setAlignment(Pos.CENTER);
-        saveReportButton.setFont(Font.font("Consolas", 18));
         saveReportButton.setPrefSize(200, 50);
         saveReportButton.setTranslateX(150);
         saveReportButton.setTranslateY(30);
@@ -160,7 +151,7 @@ public class ScannerPane extends GridPane{
                 pb = new ProcessBuilder(command);
             }
             try{
-                System.out.println("Beginning scan...");
+                System.out.println("App\t\t\tBeginning scan");
                 Process process = pb.start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
@@ -172,7 +163,7 @@ public class ScannerPane extends GridPane{
             } catch(Exception ex){
                 System.out.println("Exception " + ex + " was caught.");
             }
-            System.out.println("Finished scan.");
+            System.out.println("App\t\t\tFinished scan");
         }
         
         public String getIP(){
