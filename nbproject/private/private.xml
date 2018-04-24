@@ -3,9 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/home/admin/Downloads/portscanner/src/portscanner/views/editScan.fxml</file>
             <file>file:/home/admin/Downloads/portscanner/src/portscanner/PSMenu.java</file>
             <file>file:/home/admin/Downloads/portscanner/src/portscanner/ScannerPane.java</file>
+=======
+            <file>file:/home/admin/Downloads/portscanner/src/portscanner/ScannerPane.java</file>
+            <file>file:/home/admin/Downloads/portscanner/src/portscanner/PSMenu.java</file>
+>>>>>>> 7a44d8b221163836819007dafff35cef4a5644d5
         </group>
     </open-files>
 </project-private>

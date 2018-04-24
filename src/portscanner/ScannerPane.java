@@ -203,6 +203,7 @@ public class ScannerPane extends GridPane implements Initializable{
                 while ((line = br.readLine()) != null){
                     scanOutputText.appendText(line + "\n");
                 }
+                scanOutputText.appendText("\n");
             } catch(Exception ex){
                 System.out.println("Exception " + ex + " was caught.");
             }
