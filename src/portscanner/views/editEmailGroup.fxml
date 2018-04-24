@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1">
+    
+    <GridPane xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+        <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+    
+        <Label text="Enter new email: "
+            GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+ 
+        <TextField 
+            GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        
+        <Button text="Add"
+            GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        
+        <Label text="Delete an email: " 
+            GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+ 
+        <TextField 
+            GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        
+        <Button text="Delete"
+            GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+    </GridPane>
+    
+    <stylesheets>
+        <URL value="@/resources/styles/psentry.css"/>
+    </stylesheets>
+</AnchorPane>

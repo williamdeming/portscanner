@@ -31,6 +31,8 @@ import portscanner.entities.Port;
  */
 public class SettingsManager {
     private ArrayList<NetworkNode> networkNodes = new ArrayList<NetworkNode>();
+    private String projDir = "/home/admin/Downloads/portscanner/";
+    private String srcDir = "/home/admin/Downloads/portscanner/src/portscanner/";
     
     public SettingsManager(){
         initializeSettings();
@@ -38,10 +40,10 @@ public class SettingsManager {
     
     //Creates xml file for nodes if not present
     public void initializeSettings(){
-        File nodesFile = new File("/home/admin/Downloads/portscanner/settings/nodes.xml");
+        File nodesFile = new File(projDir + "settings/nodes.xml");
         if(nodesFile.exists() == false){
             System.out.println("Creating xml files");
-            CommandThread init = new CommandThread(new String[]{"sh", "/home/admin/Downloads/portscanner/src/portscanner/utils/init-settings.sh"});
+            CommandThread init = new CommandThread(new String[]{"sh", srcDir + "utils/init-settings.sh"});
             init.start();
         }
     }
@@ -54,7 +56,7 @@ public class SettingsManager {
         String status;
         
         try {
-            File fXmlFile = new File("/home/admin/Downloads/portscanner/settings/nodes.xml");
+            File fXmlFile = new File(projDir + "settings/nodes.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
@@ -116,4 +118,22 @@ public class SettingsManager {
     public void setNetworkNodes(ArrayList<NetworkNode> networkNodes) {
         this.networkNodes = networkNodes;
     }
+
+    public String getProjDir() {
+        return projDir;
+    }
+
+    public void setProjDir(String projDir) {
+        this.projDir = projDir;
+    }
+
+    public String getSrcDir() {
+        return srcDir;
+    }
+
+    public void setSrcDir(String srcDir) {
+        this.srcDir = srcDir;
+    }
+    
+    
 }

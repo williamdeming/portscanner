@@ -66,11 +66,11 @@ public class MonitorPane extends GridPane{
         monitorOptionsLabel.setPadding(new Insets(40, 0, 0, 0));
         this.add(monitorOptionsLabel, 1, 3);
         
-        monitorOptionsPChange = new CheckBox("Log Port Changes");
+        monitorOptionsPChange = new CheckBox("");
         monitorOptionsPChange.setPadding(new Insets(0, 0, 5, 0));
         this.add(monitorOptionsPChange, 1, 4);
         
-        monitorOptionsTimestamp = new CheckBox("Include Timestamp");
+        monitorOptionsTimestamp = new CheckBox("");
         monitorOptionsTimestamp.setPadding(new Insets(0, 0, 5, 0));
         this.add(monitorOptionsTimestamp, 1, 5);
         

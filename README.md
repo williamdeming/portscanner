@@ -8,3 +8,8 @@ libnet from https://github.com/sam-github/libnet
 Libpcap from https://github.com/the-tcpdump-group/libpcap     
 Connector/c from https://dev.mysql.com/downloads/connector/c/ 
 
+
+SETUP:
+
+Change userDir & srcDir in SettingsManager.java
+DatabaseUtils.java needs mysql username and password

@@ -12,6 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import javafx.scene.control.TextArea;
+import portscanner.SettingsManager;
 import portscanner.utils.DatabaseUtils;
 
 /**
@@ -31,13 +32,14 @@ public class MonitorThread extends Thread{
     }
     
     public void run(){
+        SettingsManager sm = new SettingsManager();
         
         //Used for comparison of database ports and scan output
         ArrayList<Port> ports = new ArrayList<Port>();
         ArrayList<Port> outputPorts = new ArrayList<Port>();
         //Command string that starts our scan thread
         String command[] = new String[5];
-        command[0] = "/home/admin/Downloads/portscanner/src/portscanner/scans/synscan";
+        command[0] = sm.getSrcDir() + "scans/synscan";
         command[1] = "-i";
         command[3] = "-p";
         //Used for parsing scan output into array, separated by newline
@@ -51,6 +53,7 @@ public class MonitorThread extends Thread{
         String ip = null;
         String portString = null;
         String spacing = null;
+        String spacing2 = null;
         
         try{
         
@@ -149,14 +152,21 @@ public class MonitorThread extends Thread{
                             //Set spacing for some aesthetically pleasing console output
                             if(("Port " + outputPorts.get(m).getNumber() +
                                 " is " + outputPorts.get(m).getStatus()).length() >= 20){
-                                spacing = "\t\t";
-                            }else{
                                 spacing = "\t\t\t";
+                            }else{
+                                spacing = "\t\t\t\t";
                             }
+                            if((ports.get(m).getExpectedStatus().length()) >= 6){
+                                spacing2 = "\t";
+                            }else{
+                                spacing2 = "\t\t";
+                            }
+                            
+                            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                             
                             monitorOutputText.appendText("\t\t\tPort " + outputPorts.get(m).getNumber() +
                                                " is " + outputPorts.get(m).getStatus() + spacing +
-                                               "(expected: " + ports.get(m).getExpectedStatus() + ")\n");
+                                               "(expected: " + ports.get(m).getExpectedStatus() + ")" + spacing2 + timestamp + "\n");
                             
                             System.out.println("Monitor\t\t\tPort " + outputPorts.get(m).getNumber() +
                                                " is " + outputPorts.get(m).getStatus() + spacing +

@@ -61,7 +61,7 @@ public class ScannerPane extends GridPane{
         scanOptionsSYN.setPadding(new Insets(0, 0, 5, 0));
         this.add(scanOptionsSYN, 1, 4);
         
-        scanOptionsACK = new CheckBox("ACK Scan");
+        scanOptionsACK = new CheckBox("");
         scanOptionsACK.setPadding(new Insets(0, 0, 5, 0));
         this.add(scanOptionsACK, 1, 5);
         
@@ -147,7 +147,8 @@ public class ScannerPane extends GridPane{
             String[] command;
             ProcessBuilder pb = new ProcessBuilder();
             if(scanOptionsSYN.isSelected() == true){
-                command = new String[]{"/home/admin/Downloads/portscanner/src/portscanner/scans/synscan", "-i", ip, "-p", portString};
+                SettingsManager sm = new SettingsManager();
+                command = new String[]{ sm.getSrcDir() + "scans/synscan", "-i", ip, "-p", portString};
                 pb = new ProcessBuilder(command);
             }
             try{
