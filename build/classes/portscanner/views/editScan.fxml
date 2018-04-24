@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="portscanner.ScannerPane">
+    <GridPane xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+        <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+    
+        <Label text="Enter ip to scan: "
+            GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+ 
+        <TextField fx:id="ipText"
+            GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        
+        <Label text="Enter port string (ports separated by colon delimiter, ex 21:22:23): " 
+            GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+ 
+        <TextField fx:id="portText"
+            GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        
+        <Button text="Save" fx:id="saveButton"
+            GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+    </GridPane>
+    
+    <stylesheets>
+        <URL value="@/resources/styles/psentry.css"/>
+    </stylesheets>
+    
+</AnchorPane>

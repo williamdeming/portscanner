@@ -6,28 +6,56 @@
 package portscanner;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 /**
  *
  * @author William Deming
  */
-public class ScannerPane extends GridPane{
+public class ScannerPane extends GridPane implements Initializable{
+    
+    public void initialize(URL arg0, ResourceBundle arg1) {
+        saveButton.setOnAction(this::handleSaveButtonAction);
+    }
+    
+    @FXML private TextField ipText;
+    @FXML private TextField portText;
+    @FXML private Button saveButton;
+    
+    @FXML protected void handleSaveButtonAction(ActionEvent event) {
+        scanIP = ipText.getText();
+        scanPorts = portText.getText();
+        System.out.println("Scan\t\t\t" + "Current IP: " + scanIP + "\t\tCurrent portString: " + scanPorts + "\n");
+    }
+    
+    public String scanIP = "127.0.0.1"; 
+    public String scanPorts = "21:22:23";
+    
     private CheckBox scanOptionsSYN, scanOptionsACK;
     private TextArea networkText, scanOutputText;
     
     public ScannerPane(){
+        
         this.setPadding(new Insets(30, 10, 30, 20));
         
         Label networkLabel = new Label("Network Info:");
@@ -71,8 +99,22 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("App\t\t\tOpen edit box");
-            }
+                System.out.println("App\t\t\tOpen edit scan window");
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader();
+                    fxmlLoader.setLocation(getClass().getResource("/portscanner/views/editScan.fxml"));
+                    Scene scene;
+                    scene = new Scene(fxmlLoader.load(), 600, 400);
+                    
+                    Stage stage;
+                    stage = new Stage();
+                    stage.setTitle("Edit Scan");
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException e) {
+                    System.out.println("Failed to create new Window: " + e);
+                }
+            }    
         });
         portsButton.setPrefSize(200, 50);
         this.add(portsButton, 1, 6);
@@ -84,8 +126,8 @@ public class ScannerPane extends GridPane{
             @Override
             public void handle(ActionEvent event) {
                 scanThread scanner = new scanThread();
-                scanner.setIP("10.0.8.22");
-                scanner.setPortString("21:22:23:443");
+                scanner.setIP(scanIP);
+                scanner.setPortString(scanPorts);
                 scanner.start();
             }
         });
