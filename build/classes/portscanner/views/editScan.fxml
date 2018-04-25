@@ -8,7 +8,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="portscanner.ScannerPane">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="portscanner.controllers.EditScanController">
+    
     <GridPane xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
         <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
     
@@ -25,8 +26,11 @@
             GridPane.columnIndex="1" GridPane.rowIndex="4"/>
         
         <Button text="Save" fx:id="saveButton"
-            GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            GridPane.columnIndex="1" GridPane.rowIndex="5" onAction="#handleSaveButtonAction"/>
 
+        
+      
+          
     </GridPane>
     
     <stylesheets>

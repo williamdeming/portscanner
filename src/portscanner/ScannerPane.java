@@ -27,32 +27,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import portscanner.entities.ScanSettings;
 
 /**
  *
  * @author William Deming
  */
-public class ScannerPane extends GridPane implements Initializable{
-    
-    public void initialize(URL arg0, ResourceBundle arg1) {
-        saveButton.setOnAction(this::handleSaveButtonAction);
-    }
-    
-    @FXML private TextField ipText;
-    @FXML private TextField portText;
-    @FXML private Button saveButton;
-    
-    @FXML protected void handleSaveButtonAction(ActionEvent event) {
-        scanIP = ipText.getText();
-        scanPorts = portText.getText();
-        System.out.println("Scan\t\t\t" + "Current IP: " + scanIP + "\t\tCurrent portString: " + scanPorts + "\n");
-    }
-    
-    public String scanIP = "127.0.0.1"; 
-    public String scanPorts = "21:22:23";
+public class ScannerPane extends GridPane{
     
     private CheckBox scanOptionsSYN, scanOptionsACK;
     private TextArea networkText, scanOutputText;
+    
+    ScanSettings.EditScan es = new ScanSettings.EditScan();
     
     public ScannerPane(){
         
@@ -62,6 +48,7 @@ public class ScannerPane extends GridPane implements Initializable{
         this.add(networkLabel, 1, 1);
         
         networkText = new TextArea();
+        networkText.setEditable(false);
         networkText.setFont(Font.font("Carlito", 12));
         networkText.setPrefSize(500, 500);
         this.add(networkText, 1, 2);
@@ -126,8 +113,9 @@ public class ScannerPane extends GridPane implements Initializable{
             @Override
             public void handle(ActionEvent event) {
                 scanThread scanner = new scanThread();
-                scanner.setIP(scanIP);
-                scanner.setPortString(scanPorts);
+                System.out.println("Scan\t\t\t" + "Current IP: " + es.ipString + "\t\tCurrent portString: " + es.portString);
+                scanner.setIP(es.ipString);
+                scanner.setPortString(es.portString);
                 scanner.start();
             }
         });
@@ -142,6 +130,7 @@ public class ScannerPane extends GridPane implements Initializable{
         this.add(scanOutputLabel, 2, 1);
         
         scanOutputText = new TextArea();
+        scanOutputText.setEditable(false);
         scanOutputText.setFont(Font.font("Carlito", 12));
         scanOutputText.setPrefSize(500, 500);
         scanOutputText.setTranslateX(0);
@@ -186,6 +175,7 @@ public class ScannerPane extends GridPane implements Initializable{
         private String ip, portString;
         
         public void run(){
+            scanOutputText.clear();
             String[] command;
             ProcessBuilder pb = new ProcessBuilder();
             if(scanOptionsSYN.isSelected() == true){

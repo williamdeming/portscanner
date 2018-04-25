@@ -9,16 +9,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import portscanner.entities.NetworkNode;
 import portscanner.utils.DatabaseUtils;
@@ -28,6 +25,7 @@ import portscanner.utils.DatabaseUtils;
  * @author William Deming
  */
 public class PSMenu extends MenuBar{
+    
     DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     
     ArrayList<NetworkNode> nodes = new ArrayList<NetworkNode>();
@@ -57,7 +55,10 @@ public class PSMenu extends MenuBar{
         MenuItem emailGroup = new MenuItem("Edit Email Group",
             new ImageView(new Image("resources/images/emailgroup.png")));
         emailGroup.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent t) {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("App\t\t\tOpen edit email window");
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader();
                     fxmlLoader.setLocation(getClass().getResource("/portscanner/views/editEmailGroup.fxml"));

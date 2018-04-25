@@ -110,6 +110,25 @@ public class DatabaseUtils {
         
         return exists;        
     }
+
+    //Inserts an email address into the emailgroup table
+    public void deleteEmail(String email){
+        try{
+            
+            System.out.println("Database\t\t\t---Deleting email " + email + "---");
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
+            String query = " delete from emailgroup where"
+                    + " email = (?)";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString (1, email);
+            ps.execute();
+            connection.close();
+            
+        }catch(Exception e){ 
+            System.out.println(e);
+        }
+    }
     
     //Drop database table for application
     public void dropDatabase(){
@@ -257,7 +276,7 @@ public class DatabaseUtils {
     public void insertEmail(String email){
         try{
             
-            //System.out.println("Database\t\t\t---Inserting email " + email + "---");
+            System.out.println("Database\t\t\t---Inserting email " + email + "---");
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/portscan?user=" + user + "&password=" + password + "&useSSL=false");
             String query = " insert into emailgroup (email)"

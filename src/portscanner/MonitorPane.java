@@ -5,9 +5,6 @@
  */
 package portscanner;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -43,6 +40,7 @@ public class MonitorPane extends GridPane{
         this.add(databaseLabel, 1, 1);
         
         databaseText = new TextArea();
+        databaseText.setEditable(false);
         databaseText.setFont(Font.font("Carlito", 12));
         databaseText.setPrefSize(500, 500);
         this.add(databaseText, 1, 2);
@@ -83,6 +81,7 @@ public class MonitorPane extends GridPane{
                 System.out.println("App\t\t\tStarting monitor");
                 monitor = new MonitorThread(monitorOutputText);
                 if(monitorRunning == false){
+                    monitorOutputText.clear();
                     monitor.start();
                     monitorRunning = true;
                 }
@@ -114,6 +113,7 @@ public class MonitorPane extends GridPane{
         this.add(monitorOutputLabel, 2, 1);
         
         monitorOutputText = new TextArea();
+        monitorOutputText.setEditable(false);
         monitorOutputText.setFont(Font.font("Carlito", 12));
         monitorOutputText.setPrefSize(500, 500);
         monitorOutputText.setTranslateX(0);
