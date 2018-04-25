@@ -9,13 +9,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,11 +21,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import portscanner.entities.ScanSettings;
+import portscanner.utils.DatabaseUtils;
 
 /**
  *
@@ -36,9 +33,10 @@ import portscanner.entities.ScanSettings;
 public class ScannerPane extends GridPane{
     
     private CheckBox scanOptionsSYN, scanOptionsACK;
+    private DatabaseUtils dbUtils = new DatabaseUtils("root", "Default1!");
     private TextArea networkText, scanOutputText;
     
-    ScanSettings.EditScan es = new ScanSettings.EditScan();
+    SettingsManager.EditSettings es = new SettingsManager.EditSettings();
     
     public ScannerPane(){
         
@@ -142,7 +140,32 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("App\t\t\tSending report");
+                System.out.println("App\t\t\tSending scan output as report");
+                try{
+                    //Create filename
+                    es.reportNumber++;
+                    String filename = es.projDir + "report" + Integer.toString(es.reportNumber);
+                    System.out.println("App\t\t\t" + filename + "created");
+                    
+                    //Write monitor output to the file
+                    PrintWriter writer = new PrintWriter(filename, "UTF-8");
+                    writer.println("PSentry Scan Output");
+                    for (String line : scanOutputText.getText().split("\n")){
+                        writer.println(line);
+                    }
+                    writer.close();
+                    
+                    //Get all emails from email group
+                    ArrayList<String> emails = new ArrayList<String>();
+                    emails = dbUtils.getAllEmails();
+                    
+                    //for each email address, email it a report
+                    for(int i = 0; i < emails.size(); i++){
+                        
+                    }
+                } catch(Exception e){
+                    System.out.println(e);
+                }
             }
         });
         sendReportButton.setAlignment(Pos.CENTER);
@@ -157,7 +180,23 @@ public class ScannerPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("App\t\t\tSaving report");
+                System.out.println("App\t\t\tSaving scan output as report");
+                try{
+                    //Create filename
+                    es.reportNumber++;
+                    String filename = es.projDir + "report" + Integer.toString(es.reportNumber);
+                    System.out.println("App\t\t\t" + filename + "created");
+
+                    //Write monitor output to the file
+                    PrintWriter writer = new PrintWriter(filename, "UTF-8");
+                    writer.println("PSentry Scan Output");
+                    for (String line : scanOutputText.getText().split("\n")){
+                        writer.println(line);
+                    }
+                    writer.close();
+                } catch(Exception e){
+                    System.out.println(e);
+                }
             }
         });
         saveReportButton.setAlignment(Pos.CENTER);
@@ -179,8 +218,8 @@ public class ScannerPane extends GridPane{
             String[] command;
             ProcessBuilder pb = new ProcessBuilder();
             if(scanOptionsSYN.isSelected() == true){
-                SettingsManager sm = new SettingsManager();
-                command = new String[]{ sm.getSrcDir() + "scans/synscan", "-i", ip, "-p", portString};
+                SettingsManager.EditSettings es = new SettingsManager.EditSettings();
+                command = new String[]{ es.srcDir + "scans/synscan", "-i", ip, "-p", portString};
                 pb = new ProcessBuilder(command);
             }
             try{

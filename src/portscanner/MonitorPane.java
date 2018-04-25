@@ -5,6 +5,7 @@
  */
 package portscanner;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,6 +21,7 @@ import portscanner.entities.MonitorThread;
 import portscanner.entities.NetworkNode;
 import portscanner.utils.DatabaseUtils;
 
+
 /**
  *
  * @author William Deming
@@ -32,6 +34,8 @@ public class MonitorPane extends GridPane{
     private TextArea monitorOutputText, databaseText;
     public boolean monitorRunning = false;
     public String spacing;
+    
+    SettingsManager.EditSettings es = new SettingsManager.EditSettings();
     
     public MonitorPane(){
         this.setPadding(new Insets(30, 10, 30, 20));
@@ -125,7 +129,32 @@ public class MonitorPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("App\t\t\tSending report");
+                System.out.println("App\t\t\tSending monitor output as report");
+                try{
+                    //Create filename
+                    es.reportNumber++;
+                    String filename = es.projDir + "report" + Integer.toString(es.reportNumber);
+                    System.out.println("App\t\t\t" + filename + "created");
+                    
+                    //Write monitor output to the file
+                    PrintWriter writer = new PrintWriter(filename, "UTF-8");
+                    writer.println("PSentry Monitor Output");
+                    for (String line : monitorOutputText.getText().split("\n")){
+                        writer.println(line);
+                    }
+                    writer.close();
+                    
+                    //Get all emails from email group
+                    ArrayList<String> emails = new ArrayList<String>();
+                    emails = dbUtils.getAllEmails();
+                    
+                    //for each email address, email it a report
+                    for(int i = 0; i < emails.size(); i++){
+                        
+                    }
+                } catch(Exception e){
+                    System.out.println(e);
+                }
             }
         });
         sendReportButton.setAlignment(Pos.CENTER);
@@ -140,7 +169,23 @@ public class MonitorPane extends GridPane{
             
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("App\t\t\tSaving report");
+                System.out.println("App\t\t\tSaving monitor output as report");
+                try{
+                    //Create filename
+                    es.reportNumber++;
+                    String filename = es.projDir + "report" + Integer.toString(es.reportNumber);
+                    System.out.println("App\t\t\t" + filename + "created");
+
+                    //Write monitor output to the file
+                    PrintWriter writer = new PrintWriter(filename, "UTF-8");
+                    writer.println("PSentry Monitor Output");
+                    for (String line : monitorOutputText.getText().split("\n")){
+                        writer.println(line);
+                    }
+                    writer.close();
+                } catch(Exception e){
+                    System.out.println(e);
+                }
             }
         });
         saveReportButton.setAlignment(Pos.CENTER);

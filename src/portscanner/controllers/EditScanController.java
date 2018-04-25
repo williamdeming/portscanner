@@ -9,7 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import portscanner.entities.ScanSettings;
+import portscanner.SettingsManager;
 
 /**
  *
@@ -19,7 +19,7 @@ public class EditScanController {
     @FXML private TextField ipText;
     @FXML private TextField portText;
     
-    ScanSettings.EditScan es = new ScanSettings.EditScan();
+    SettingsManager.EditSettings es = new SettingsManager.EditSettings();
     
     @FXML protected void handleSaveButtonAction(ActionEvent event) {
         es.ipString = ipText.getText();

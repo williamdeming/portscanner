@@ -31,19 +31,25 @@ import portscanner.entities.Port;
  */
 public class SettingsManager {
     private ArrayList<NetworkNode> networkNodes = new ArrayList<NetworkNode>();
-    private String projDir = "/home/admin/Downloads/portscanner/";
-    private String srcDir = "/home/admin/Downloads/portscanner/src/portscanner/";
     
     public SettingsManager(){
         initializeSettings();
     }
     
+    public static class EditSettings{
+        public static String projDir = "/home/admin/Downloads/portscanner/";
+        public static String srcDir = "/home/admin/Downloads/portscanner/src/portscanner/";
+        public static String ipString = "127.0.0.1";
+        public static String portString = "22:23:79:80:443";
+        public static int reportNumber = 0;
+    }
+    
     //Creates xml file for nodes if not present
     public void initializeSettings(){
-        File nodesFile = new File(projDir + "settings/nodes.xml");
+        File nodesFile = new File(SettingsManager.EditSettings.projDir + "settings/nodes.xml");
         if(nodesFile.exists() == false){
             System.out.println("Creating xml files");
-            CommandThread init = new CommandThread(new String[]{"sh", srcDir + "utils/init-settings.sh"});
+            CommandThread init = new CommandThread(new String[]{"sh", SettingsManager.EditSettings.srcDir + "utils/init-settings.sh"});
             init.start();
         }
     }
@@ -56,7 +62,7 @@ public class SettingsManager {
         String status;
         
         try {
-            File fXmlFile = new File(projDir + "settings/nodes.xml");
+            File fXmlFile = new File(SettingsManager.EditSettings.projDir + "settings/nodes.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
@@ -118,22 +124,4 @@ public class SettingsManager {
     public void setNetworkNodes(ArrayList<NetworkNode> networkNodes) {
         this.networkNodes = networkNodes;
     }
-
-    public String getProjDir() {
-        return projDir;
-    }
-
-    public void setProjDir(String projDir) {
-        this.projDir = projDir;
-    }
-
-    public String getSrcDir() {
-        return srcDir;
-    }
-
-    public void setSrcDir(String srcDir) {
-        this.srcDir = srcDir;
-    }
-    
-    
 }

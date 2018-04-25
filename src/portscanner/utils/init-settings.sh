@@ -2,7 +2,6 @@
 #Author: William Deming
 #init-settings.sh: create xml for addresses and ports if files aren't present
 
-
 node_dir=/home/admin/Downloads/PortScanner/settings/nodes.xml
 
 if [ ! -e "$node_dir" ]; then

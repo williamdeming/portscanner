@@ -32,14 +32,14 @@ public class MonitorThread extends Thread{
     }
     
     public void run(){
-        SettingsManager sm = new SettingsManager();
+        SettingsManager.EditSettings es = new SettingsManager.EditSettings();
         
         //Used for comparison of database ports and scan output
         ArrayList<Port> ports = new ArrayList<Port>();
         ArrayList<Port> outputPorts = new ArrayList<Port>();
         //Command string that starts our scan thread
         String command[] = new String[5];
-        command[0] = sm.getSrcDir() + "scans/synscan";
+        command[0] = es.srcDir + "scans/synscan";
         command[1] = "-i";
         command[3] = "-p";
         //Used for parsing scan output into array, separated by newline
