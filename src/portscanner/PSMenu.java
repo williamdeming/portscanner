@@ -28,25 +28,23 @@ public class PSMenu extends MenuBar{
     public PSMenu(ArrayList<NetworkNode> nodes){
         this.nodes = nodes;
         
-        Menu menuPresets = new Menu("Presets");
-        MenuItem viewPresets = new MenuItem("View Presets",
-            new ImageView(new Image("resources/images/viewpresets.png")));
-        viewPresets.setOnAction(new EventHandler<ActionEvent>() {
+        Menu menuDatabase = new Menu("Database");
+        MenuItem restoreDatabase = new MenuItem("Restore Database",
+            new ImageView(new Image("resources/images/exclamation.png")));
+        restoreDatabase.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
-                
+                dbUtils.dropDatabase();
+                dbUtils.checkDatabase();
             }
         });
-        menuPresets.getItems().addAll(viewPresets);
-        
-        Menu menuDatabase = new Menu("Database");
-        MenuItem database = new MenuItem("Update Database (XML)",
+        MenuItem updateDatabase = new MenuItem("Update Database (XML)",
             new ImageView(new Image("resources/images/database.png")));
-        database.setOnAction(new EventHandler<ActionEvent>() {
+        updateDatabase.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 dbUtils.updateDatabaseFromXML(nodes);
             }
         });
-        menuDatabase.getItems().addAll(database);             
+        menuDatabase.getItems().addAll(updateDatabase, restoreDatabase);             
         
         Menu menuEmail = new Menu("Email");
         MenuItem emailGroup = new MenuItem("Email Group",
@@ -78,6 +76,6 @@ public class PSMenu extends MenuBar{
         });
         menuHelp.getItems().addAll(getHelp);
         
-        this.getMenus().addAll(menuPresets, menuDatabase, menuEmail, menuSettings, menuHelp);
+        this.getMenus().addAll(menuDatabase, menuEmail, menuSettings, menuHelp);
     }
 }

@@ -48,32 +48,25 @@ public class PortScanner extends Application {
         ScannerPane scannerPane = new ScannerPane();
         
         MonitorPane monitorPane = new MonitorPane();
-        MonitorThread monitor = new MonitorThread();
-        monitorPane.setMonitor(monitor);
         
         //Tabs
         TabPane tabPane = new TabPane();
         
         Tab scannerTab = new Tab();
         scannerTab.setClosable(false);
-        scannerTab.setText("                                  " +
-                           "          Scanner" +
-                           "          " +
-                           "                                  ");
+        scannerTab.setText("    Scanner    ");
         scannerTab.setContent(scannerPane);
         tabPane.getTabs().add(scannerTab);
         
         Tab monitorTab = new Tab();
         monitorTab.setClosable(false);
-        monitorTab.setText("                                  " +
-                           "          Monitor" +
-                           "          " +
-                           "                                  ");
+        monitorTab.setText("    Monitor    ");
         monitorTab.setContent(monitorPane);
         tabPane.getTabs().add(monitorTab);
         
         //Scene
         Scene scene = new Scene(new VBox(), 1000, 800);
+        scene.getStylesheets().add("resources/styles/psentry.css");
         ((VBox) scene.getRoot()).getChildren().addAll(vbox, psMenu, tabPane, monitorPane, scannerPane);
         
         primaryStage.setTitle("PSentry");

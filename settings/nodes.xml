@@ -2,22 +2,55 @@
 <!--PSentry Nodes-->
 <nodelist>
   <node>
-    <address>10.0.20.21</address>
+    <address>10.0.8.22</address>
     <port>
-      <number>200</number>
-      <expectedstatus>closed</expectedstatus>
-    </port>
-    <port>
-      <number>201</number>
-      <expectedstatus>filtered</expectedstatus>
-    </port>
-    <port>
-      <number>202</number>
+      <number>23</number>
       <expectedstatus>open</expectedstatus>
     </port>
     <port>
-      <number>1000</number>
-      <expectedstatus>filtered</expectedstatus>
+      <number>443</number>
+      <expectedstatus>open</expectedstatus>
+    </port>
+  </node>
+  <node>
+    <address>10.0.8.23</address>
+    <port>
+      <number>443</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+  </node>
+  <node>
+    <address>10.0.8.24</address>
+    <port>
+      <number>21</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+    <port>
+      <number>22</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+    <port>
+      <number>23</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+    <port>
+      <number>79</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+    <port>
+      <number>80</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+    <port>
+      <number>443</number>
+      <expectedstatus>closed</expectedstatus>
+    </port>
+  </node>
+  <node>
+    <address>10.0.8.25</address>
+    <port>
+      <number>443</number>
+      <expectedstatus>open</expectedstatus>
     </port>
   </node>
 </nodelist>

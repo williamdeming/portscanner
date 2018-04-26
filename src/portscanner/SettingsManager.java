@@ -34,15 +34,14 @@ public class SettingsManager {
     
     public SettingsManager(){
         initializeSettings();
-        retrieveNodes();
     }
     
     //Creates xml file for nodes if not present
     public void initializeSettings(){
-        File nodesFile = new File("/home/admin/Downloads/PortScanner/settings/nodes.xml");
+        File nodesFile = new File("/home/admin/Downloads/portscanner/settings/nodes.xml");
         if(nodesFile.exists() == false){
             System.out.println("Creating xml files");
-            CommandThread init = new CommandThread(new String[]{"sh", "/home/admin/Downloads/PortScanner/src/portscanner/utils/init-settings.sh"});
+            CommandThread init = new CommandThread(new String[]{"sh", "/home/admin/Downloads/portscanner/src/portscanner/utils/init-settings.sh"});
             init.start();
         }
     }
@@ -55,7 +54,7 @@ public class SettingsManager {
         String status;
         
         try {
-            File fXmlFile = new File("/home/admin/Downloads/PortScanner/settings/nodes.xml");
+            File fXmlFile = new File("/home/admin/Downloads/portscanner/settings/nodes.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
@@ -94,6 +93,7 @@ public class SettingsManager {
                     //Save the port information and ip address in network node object, add to arraylist of network nodes
                     NetworkNode netNode = new NetworkNode(ports, address);
                     networkNodes.add(netNode);
+                    ports = new ArrayList<Port>();
                 }
             }
         } catch (Exception e) {
@@ -109,6 +109,7 @@ public class SettingsManager {
     }
     
     public ArrayList<NetworkNode> getNetworkNodes() {
+        retrieveNodes();
         return networkNodes;
     }
 
