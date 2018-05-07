@@ -5,6 +5,7 @@
 #include <libnet.h>
 #include <pcap.h>
 #include <string.h>
+#include <pthread.h>
 
 /* This program runs a simple syn scan on a specified IP address */
 
@@ -12,15 +13,25 @@
 /* Book: Network Security Tools, Section 11.4. Combining libnet and libpcap */
 /* books.gigatux.nl/mirror/networksecuritytools/0596007949/toc.html */
 
-int answer = 0;            /* flag for scan timeout */
+//int answer = 0;            /* flag for scan timeout */
+struct portInfo //holds number and open/closed/filter id
+{
+  int portNum;
+  int id;
+  int timeOut;
+}portInfo;
+
+struct portInfo storePort[65535]; //array of # of ports to store ports scanned
+int portCount = 0;   //number of stored ports
+pthread_mutex_t mutex1;
 
 /* usage */
 void
 usage (char *name)
 {
-  printf ("Usage: %s -i ip_address -p ports\n", name);
+  printf ("Usage: %s -i ip_address -p portMin:portMax\n", name);
   printf ("    -i    IP address to scan\n");
-  printf ("    -p    Ports to check\n");
+  printf ("    -p    Port range to check\n");
   exit (1);
 }
 
@@ -30,30 +41,37 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
 {
   struct libnet_tcp_hdr *tcp =
     (struct libnet_tcp_hdr *) (packet + LIBNET_IPV4_H + LIBNET_ETH_H);
-
   if (tcp->th_flags == 0x14)
     {
-      printf ("Port %d appears to be closed\n", ntohs (tcp->th_sport));
-      answer = 0;
+     // printf ("Port %d appears to be closed\n", ntohs (tcp->th_sport));
+      storePort[portCount].portNum = ntohs (tcp->th_sport);
+      storePort[portCount].id = 1;
+      storePort[portCount].timeOut = 0;
+      portCount++;
+     // answer = 0;
     }
   else
     {
       if (tcp->th_flags == 0x12)
       {
-      printf ("Port %d appears to be open\n", ntohs (tcp->th_sport));
-      answer = 0;
+       // printf ("Port %d appears to be open\n", ntohs (tcp->th_sport));
+        storePort[portCount].portNum = ntohs(tcp->th_sport); 
+        storePort[portCount].id = 2;
+        storePort[portCount].timeOut = 0;
+        portCount++;
+       // answer = 0;
       }
     }
 }
 
-void portStringConvert(char *portInit, int *ports)
+int portStringConvert(char *portInit, int *ports)
 {
     int size = strlen(portInit);
     char portA[size];//char array size of char *
     char *delim = ":";//break point in string
     char *token = "";
+    int count = 0;
     char *a;//used only for strtol(), stores rest of string which is null in this case
-   // int ports[strlen(portInit)];
     int i = 0; 
     int j;
     //before forloop
@@ -66,9 +84,106 @@ void portStringConvert(char *portInit, int *ports)
     while (token != NULL)//parses through token and inputs into port array
     {
       ports[i] = strtol(token, &a, 10);
-      token = strtok(NULL, delim);
+      token = strtok(NULL, delim);    
       i++;
     }
+    if(i != 2)
+    {
+      return 0;
+    }
+
+    return 1;
+}
+
+typedef struct Bundle//struct to hold all values needed for threads
+{
+  int port;
+  libnet_ptag_t tcp;
+  libnet_t *l;
+  libnet_ptag_t ipv4;
+  u_int32_t myipaddr;
+  in_addr_t ipaddr;
+  time_t tv;
+  pcap_t *handle;
+
+} Bundle;
+  
+//Entry thread for func. Adds a tcp packet to each thread created
+void *entry(void * arg)
+{
+
+  Bundle *bundle = (Bundle*) arg;
+  /* build the TCP header */
+  bundle->tcp = libnet_build_tcp (libnet_get_prand (LIBNET_PRu16),    	/* src port */
+                  bundle->port,    					/* destination port */
+                  libnet_get_prand (LIBNET_PRu16),    			/* sequence number */
+                  0,    						/* acknowledgement */
+                  TH_SYN,    						/* control flags */
+                  7,    						/* window */
+                  0,    				      		/* checksum - 0 = autofill */
+                  0,    						/* urgent */
+                  LIBNET_TCP_H,    					/* header length */
+                  NULL,    						/* payload */
+                  0,    						/* payload length */
+                  bundle->l,    					/* libnet context */
+                  bundle->tcp);    					/* protocol tag */
+
+  if (bundle->tcp == -1)
+  {
+    fprintf (stderr,
+           "Unable to build TCP header: %s\n", libnet_geterror (bundle->l));
+    exit (1);
+  }
+  /* build the IP header */
+  bundle->ipv4 = libnet_build_ipv4 (LIBNET_TCP_H + LIBNET_IPV4_H,    	/* length */
+                0,    							/* TOS */
+                libnet_get_prand (LIBNET_PRu16),    			/* IP ID */
+                0,    							/* frag offset */
+                127,    						/* TTL */
+                IPPROTO_TCP,    					/* upper layer protocol */
+                0,    							/* checksum, 0=autofill */
+                bundle->myipaddr,    					/* src IP */
+                bundle->ipaddr,    					/* dest IP */
+                NULL,    						/* payload */
+                0,    							/* payload len */
+                bundle->l,    						/* libnet context */
+                bundle->ipv4);    					/* protocol tag */
+
+  if (bundle->ipv4 == -1)
+  {
+    fprintf (stderr,
+           "Unable to build IPv4 header: %s\n", libnet_geterror (bundle->l));
+    exit (1);
+  }
+
+  /* write the packet */
+  if ((libnet_write (bundle->l)) == -1)
+  {
+    fprintf (stderr, "Unable to send packet: %s\n",
+         libnet_geterror (bundle->l));
+    exit (1);
+  }
+  /* set variables for flag/counter */
+  storePort[portCount].timeOut = 1;
+ // answer = 1;
+  bundle->tv = time (NULL);
+  /* capture the reply */
+  while (storePort[portCount].timeOut)
+  {
+    pthread_mutex_lock(&mutex1); 
+    pcap_dispatch (bundle->handle, -1, packet_handler, NULL);
+
+    if ((time (NULL) - bundle->tv) > 2)
+    {
+     storePort[portCount].timeOut = 0;
+     // answer = 0;    /* timed out */
+      //printf ("Port %d appears to be filtered\n", bundle->port);
+      storePort[portCount].portNum = bundle->port;
+      storePort[portCount].id = 3;
+      portCount++;
+    }
+    pthread_mutex_unlock(&mutex1);
+  }
 }
 
 int
@@ -89,10 +204,15 @@ main (int argc, char *argv[])
   struct bpf_program fp;    			/* compiled filter */
   /* ports to scan */
   char *portInit = argv[4];
-  int ports[strlen(portInit)];
+  int starterPort[2];
   int i;
-  time_t tv;
+  time_t tv = 0;
 
+  if(pthread_mutex_init(&mutex1, NULL) != 0)
+  {
+    fprintf(stderr, "mutex init error\n");
+    exit(1);
+  }
 
   if (argc != 5)
     usage (argv[0]);
@@ -122,7 +242,10 @@ main (int argc, char *argv[])
         printf ("Must enter ports");
         usage (argv[0]);
       }
-      portStringConvert(portInit, ports);
+      if(portStringConvert(portInit, starterPort) == 0)//converts to port and checks for min/max
+      {
+        usage (argv[0]);
+      }
       break;
     default:
       usage (argv[0]);
@@ -130,6 +253,20 @@ main (int argc, char *argv[])
     }
     }
 
+    if(starterPort[0] > starterPort[1])//checks if min is first
+    {
+       usage (argv[0]);
+    }
+
+    int portMin = starterPort[0];
+    int portMax = starterPort[1];
+    int size = portMax - (portMin - 1);//array size and amount to loop
+    int ports[size];
+    for(i = 0; i < size; i++)//makes an array first port to second port
+    {    
+      ports[i] = portMin;
+      portMin++;
+    }
   /* get the ip address of the device */
   if ((myipaddr = libnet_get_ipaddr4 (l)) == -1)
     {
@@ -179,84 +316,80 @@ main (int argc, char *argv[])
     }
 
   pcap_freecode (&fp);
-
-  /* seed the pseudo random number generator */
-  libnet_seed_prand (l);
-
-  for (i = 0; ports[i] != 0; i++)
+  Bundle temp = {0, tcp, l, ipv4, myipaddr, ipaddr, tv, handle};//init the bundle
+  Bundle bundle[size];
+  for (i = 0; i < size; i++)//array of struct to prevent all threads from being the last port
+  {
+    bundle[i] = temp;
+  }
+//  int testCount = 0;
+  //Creates threads to number of ports 
+  pthread_t thread[size];
+  for (i = 0; i < size; i++)//loop that assigns port and creates thread
     {
-      /* build the TCP header */
-      tcp = libnet_build_tcp (libnet_get_prand (LIBNET_PRu16),    	/* src port */
-                  ports[i],    						/* destination port */
-                  libnet_get_prand (LIBNET_PRu16),    			/* sequence number */
-                  0,    						/* acknowledgement */
-                  TH_SYN,    						/* control flags */
-                  7,    						/* window */
-                  0,    					/* checksum - 0 = autofill */
-                  0,    						/* urgent */
-                  LIBNET_TCP_H,    					/* header length */
-                  NULL,    						/* payload */
-                  0,    						/* payload length */
-                  l,    						/* libnet context */
-                  tcp);    						/* protocol tag */
-
-    if (tcp == -1)
+      bundle[i].port = ports[i];
+      if (pthread_create(&thread[i], NULL,  entry, &bundle[i]))
+      {
+        fprintf(stderr, "Error creating thead\n");
+        return 1;
+      }
+   //   testCount++;
+    }
+ // printf("testCount create: %d\n", testCount);
+ // testCount = 0;
+  for (i = 0; i < size; i++)//joins the thread
+  {
+    if (pthread_join(thread[i], NULL))
     {
-      fprintf (stderr,
-           "Unable to build TCP header: %s\n", libnet_geterror (l));
-      exit (1);
-    }
+      fprintf(stderr, "Error joining thread\n");
+      return 2;
+    } 
+  //  testCount++;
+  }
 
-      /* build the IP header */
-      ipv4 = libnet_build_ipv4 (LIBNET_TCP_H + LIBNET_IPV4_H,    	/* length */
-                0,    							/* TOS */
-                libnet_get_prand (LIBNET_PRu16),    			/* IP ID */
-                0,    							/* frag offset */
-                127,    						/* TTL */
-                IPPROTO_TCP,    					/* upper layer protocol */
-                0,    							/* checksum, 0=autofill */
-                myipaddr,    						/* src IP */
-                ipaddr,    						/* dest IP */
-                NULL,    						/* payload */
-                0,    							/* payload len */
-                l,    							/* libnet context */
-                ipv4);    						/* protocol tag */
+ // printf("testCount join: %d\n", testCount);
+  printf("portCount: %d\n", portCount);
+  struct portInfo printPort[portCount];
+  for (i = 0; i < portCount; i++)//puts ports into an exact array to sort
+  {
+    printPort[i].portNum = storePort[i].portNum;
+    printPort[i].id = storePort[i].id;
+  }
 
-    if (ipv4 == -1)
+  int j;
+  int temp1;
+  for(i = 0; i < portCount; i++)//simple n^2 sort array, lowest to highest
+  {
+    for(j = i + 1; j < portCount; j++)
     {
-      fprintf (stderr,
-           "Unable to build IPv4 header: %s\n", libnet_geterror (l));
-      exit (1);
+      if(printPort[i].portNum > printPort[j].portNum)
+      {
+        temp1 = printPort[i].portNum;
+        printPort[i].portNum = printPort[j].portNum;
+        printPort[j].portNum = temp1;
+      }
     }
-
-      /* write the packet */
-      if ((libnet_write (l)) == -1)
+  }
+  int testCount = 0;
+  for (i = 0; i < portCount; i++)//loops through array to print the ports
+  {
+    if(printPort[i].id == 1)
     {
-      fprintf (stderr, "Unable to send packet: %s\n",
-           libnet_geterror (l));
-      exit (1);
+       printf("Port %d appears to be closed\n", printPort[i].portNum);
     }
-
-      /* set variables for flag/counter */
-      answer = 1;
-      tv = time (NULL);
-
-      /* capture the reply */
-      while (answer)
+    else if(printPort[i].id == 2)
     {
-      pcap_dispatch (handle, -1, packet_handler, NULL);
-
-      if ((time (NULL) - tv) > 2)
-        {
-          answer = 0;    /* timed out */
-          printf ("Port %d appears to be filtered\n", ports[i]);
-        }
+      printf("Port %d appears to be open\n", printPort[i].portNum);
     }
-
-   // dbPortInput(id, ports[i], status, expected_status, host, user, pass);
-
-    }
+    else if(printPort[i].id == 3)
+    {
+      printf("Port %d appears to be filtered\n", printPort[i].portNum);
+    } 
+    testCount++; 
+  }
+  printf("Ports scanned: %d\n", testCount);
   /* exit cleanly */
   libnet_destroy (l);
+  pthread_mutex_destroy(&mutex1);
   return 0;
 }
