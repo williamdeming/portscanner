@@ -29,8 +29,9 @@ pthread_mutex_t mutex1;
 void
 usage (char *name)
 {
-  printf ("Usage: %s -i ip_address -p portMin:portMax\n", name);
+  printf ("Usage: %s -i ip_address -t type -p portMin:portMax\n", name);
   printf ("    -i    IP address to scan\n");
+  printf ("    -t    0 for specific ports, 1 for range of ports\n");
   printf ("    -p    Port range to check\n");
   exit (1);
 }
@@ -64,13 +65,12 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
     }
 }
 
-int portStringConvert(char *portInit, int *ports)
+int portStringConvert(char *portInit, int *ports, int type)
 {
     int size = strlen(portInit);
     char portA[size];//char array size of char *
     char *delim = ":";//break point in string
     char *token = "";
-    int count = 0;
     char *a;//used only for strtol(), stores rest of string which is null in this case
     int i = 0; 
     int j;
@@ -87,12 +87,12 @@ int portStringConvert(char *portInit, int *ports)
       token = strtok(NULL, delim);    
       i++;
     }
-    if(i != 2)
+    if(i != 2 && type == 1)
     {
       return 0;
     }
 
-    return 1;
+    return i;
 }
 
 typedef struct Bundle//struct to hold all values needed for threads
@@ -190,7 +190,8 @@ int
 main (int argc, char *argv[])
 {
   char *device = NULL;        			/* device for sniffing/sending */
-  char o;            				/* for option processing */
+  char o;
+  char *a;//for string tol            		/* for option processing */
   in_addr_t ipaddr;        			/* ip address to scan */
   u_int32_t myipaddr;        			/* ip address of this host */
   libnet_t *l;            			/* libnet context */
@@ -203,10 +204,14 @@ main (int argc, char *argv[])
   char *filter = "(tcp[13] == 0x14) || (tcp[13] == 0x12)";
   struct bpf_program fp;    			/* compiled filter */
   /* ports to scan */
-  char *portInit = argv[4];
+  char *portInit = argv[6];
   int starterPort[2];
-  int i;
+  char *typeString = argv[4];
+  int i, portMin, portMax, type;
   time_t tv = 0;
+  int size = 0;
+
+  type = strtol(typeString, &a, 10);//makes -t input an int
 
   if(pthread_mutex_init(&mutex1, NULL) != 0)
   {
@@ -214,7 +219,7 @@ main (int argc, char *argv[])
     exit(1);
   }
 
-  if (argc != 5)
+  if (argc != 7)
     usage (argv[0]);
 
   /* open context */
@@ -225,7 +230,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  while ((o = getopt (argc, argv, "i:p:")) > 0)
+  while ((o = getopt (argc, argv, "i:t:p:")) > 0)
     {
       switch (o)
     {
@@ -236,13 +241,20 @@ main (int argc, char *argv[])
         usage (argv[0]);
       }
       break;
+    case 't':
+      if (type != 0 && type != 1)//checks for correct value
+      {
+        usage (argv[0]);
+      }
+      break;
     case 'p':
       if (portInit == NULL)
       {
         printf ("Must enter ports");
         usage (argv[0]);
       }
-      if(portStringConvert(portInit, starterPort) == 0)//converts to port and checks for min/max
+      size = portStringConvert(portInit, starterPort, type);//convert string to int
+      if(size == 0)
       {
         usage (argv[0]);
       }
@@ -252,21 +264,37 @@ main (int argc, char *argv[])
       break;
     }
     }
-
+    
+  if(type == 1)//only use this code for port range
+  {
     if(starterPort[0] > starterPort[1])//checks if min is first
     {
        usage (argv[0]);
     }
 
-    int portMin = starterPort[0];
-    int portMax = starterPort[1];
-    int size = portMax - (portMin - 1);//array size and amount to loop
-    int ports[size];
+    portMin = starterPort[0];
+    portMax = starterPort[1];
+    size = portMax - (portMin - 1);//array size and amount to loop
+  }
+
+  int ports[size];//int after check for port range for size check
+  
+  if(type == 1)//check again for port range vs specific port
+  {
     for(i = 0; i < size; i++)//makes an array first port to second port
     {    
       ports[i] = portMin;
       portMin++;
     }
+  }
+  else
+  {
+    for (i = 0; i < size; i++)//makes array for specific ports
+    {
+      ports[i] = starterPort[i];
+    }
+  }
+
   /* get the ip address of the device */
   if ((myipaddr = libnet_get_ipaddr4 (l)) == -1)
     {
