@@ -40,31 +40,33 @@ void
 packet_handler (u_char * user, const struct pcap_pkthdr *header,
         const u_char * packet)
 {
-  pthread_mutex_lock(&mutex1); 
   struct libnet_tcp_hdr *tcp =
     (struct libnet_tcp_hdr *) (packet + LIBNET_IPV4_H + LIBNET_ETH_H);
   if (tcp->th_flags == 0x14)
     {
+      pthread_mutex_lock(&mutex1); 
      // printf ("Port %d appears to be closed\n", ntohs (tcp->th_sport));
       storePort[portCount].portNum = ntohs (tcp->th_sport);
       storePort[portCount].id = 1;
       storePort[portCount].timeOut = 0;
       portCount++;
+      pthread_mutex_unlock(&mutex1); 
      // answer = 0;
     }
   else
     {
       if (tcp->th_flags == 0x12)
       {
+        pthread_mutex_lock(&mutex1); 
        // printf ("Port %d appears to be open\n", ntohs (tcp->th_sport));
         storePort[portCount].portNum = ntohs(tcp->th_sport); 
         storePort[portCount].id = 2;
         storePort[portCount].timeOut = 0;
         portCount++;
        // answer = 0;
+        pthread_mutex_unlock(&mutex1); 
       }
     }
-    pthread_mutex_unlock(&mutex1); 
 }
 
 int portStringConvert(char *portInit, int *ports, int type)
@@ -173,17 +175,17 @@ void *entry(void * arg)
   while (storePort[portCount].timeOut)
   {  
     pcap_dispatch (bundle->handle, -1, packet_handler, NULL);
-    pthread_mutex_lock(&mutex1); 
     if ((time (NULL) - bundle->tv) > 2)
     {
-     storePort[portCount].timeOut = 0;
-     // answer = 0;    /* timed out */
+      pthread_mutex_lock(&mutex1); 
+      storePort[portCount].timeOut = 0;
+      //answer = 0;    /* timed out */
       //printf ("Port %d appears to be filtered\n", bundle->port);
       storePort[portCount].portNum = bundle->port;
       storePort[portCount].id = 3;
       portCount++;
-    }
-    pthread_mutex_unlock(&mutex1);
+      pthread_mutex_lock(&mutex1); 
+    } 
   }
 }
 
