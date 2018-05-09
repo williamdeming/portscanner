@@ -49,7 +49,7 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
       storePort[portCount].portNum = ntohs (tcp->th_sport);
       storePort[portCount].id = 1;
       storePort[portCount].timeOut = 0;
-      portCount++;
+//      portCount++;
       pthread_mutex_unlock(&mutex1); 
      // answer = 0;
     }
@@ -62,7 +62,7 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
         storePort[portCount].portNum = ntohs(tcp->th_sport); 
         storePort[portCount].id = 2;
         storePort[portCount].timeOut = 0;
-        portCount++;
+//        portCount++;
        // answer = 0;
         pthread_mutex_unlock(&mutex1); 
       }
@@ -186,6 +186,10 @@ void *entry(void * arg)
       portCount++;
       pthread_mutex_lock(&mutex1); 
     } 
+  }
+  if(storePort[portCount].id == 1 || storePort[portCount].id == 2)
+  {
+    portCount++;
   }
 }
 
