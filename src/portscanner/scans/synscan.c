@@ -40,6 +40,7 @@ void
 packet_handler (u_char * user, const struct pcap_pkthdr *header,
         const u_char * packet)
 {
+  pthread_mutex_lock(&mutex1); 
   struct libnet_tcp_hdr *tcp =
     (struct libnet_tcp_hdr *) (packet + LIBNET_IPV4_H + LIBNET_ETH_H);
   if (tcp->th_flags == 0x14)
@@ -63,6 +64,7 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
        // answer = 0;
       }
     }
+    pthread_mutex_unlock(&mutex1); 
 }
 
 int portStringConvert(char *portInit, int *ports, int type)
@@ -169,10 +171,9 @@ void *entry(void * arg)
   bundle->tv = time (NULL);
   /* capture the reply */
   while (storePort[portCount].timeOut)
-  {
-    pthread_mutex_lock(&mutex1); 
+  {  
     pcap_dispatch (bundle->handle, -1, packet_handler, NULL);
-
+    pthread_mutex_lock(&mutex1); 
     if ((time (NULL) - bundle->tv) > 2)
     {
      storePort[portCount].timeOut = 0;
