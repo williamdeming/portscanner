@@ -123,6 +123,16 @@ typedef struct Bundle//struct to hold all values needed for threads
 void *entry(void * arg)
 {
 
+  libnet_t *l;            			/* libnet context */
+  char libnet_errbuf[LIBNET_ERRBUF_SIZE];    	/* libnet error messages */
+
+  l = libnet_init (LIBNET_RAW4, NULL, libnet_errbuf);
+  if (l == NULL)
+    {
+      fprintf (stderr, "Error opening context: %s", libnet_errbuf);
+      exit (1);
+    }
+
   Bundle *bundle = (Bundle*) arg;
   /* build the TCP header */
   bundle->tcp = libnet_build_tcp (libnet_get_prand (LIBNET_PRu16),    	/* src port */
@@ -136,13 +146,13 @@ void *entry(void * arg)
                   LIBNET_TCP_H,    					/* header length */
                   NULL,    						/* payload */
                   0,    						/* payload length */
-                  bundle->l,    					/* libnet context */
+                  l,    					/* libnet context */
                   bundle->tcp);    					/* protocol tag */
 
   if (bundle->tcp == -1)
   {
     fprintf (stderr,
-           "Unable to build TCP header: %s\n", libnet_geterror (bundle->l));
+           "Unable to build TCP header: %s\n", libnet_geterror (l));
     exit (1);
   }
   /* build the IP header */
@@ -157,18 +167,18 @@ void *entry(void * arg)
                 bundle->ipaddr,    					/* dest IP */
                 NULL,    						/* payload */
                 0,    							/* payload len */
-                bundle->l,    						/* libnet context */
+                l,    						/* libnet context */
                 bundle->ipv4);    					/* protocol tag */
 
   if (bundle->ipv4 == -1)
   {
     fprintf (stderr,
-           "Unable to build IPv4 header: %s\n", libnet_geterror (bundle->l));
+           "Unable to build IPv4 header: %s\n", libnet_geterror (l));
     exit (1);
   }
 
   /* write the packet */
-  if ((libnet_write (bundle->l)) == -1)
+  if ((libnet_write (l)) == -1)
   {
     fprintf (stderr, "Unable to send packet: %s\n",
          libnet_geterror (bundle->l));
@@ -205,6 +215,7 @@ void *entry(void * arg)
     portCount++;
   }
   pthread_mutex_unlock(&mutex1);
+  libnet_destroy(l);
   return NULL;
 }
 
