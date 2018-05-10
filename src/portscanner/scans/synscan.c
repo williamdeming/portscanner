@@ -6,6 +6,7 @@
 #include <pcap.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 
 /* This program runs a simple syn scan on a specified IP address */
 
@@ -45,7 +46,7 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
   if (tcp->th_flags == 0x14)
     {
       pthread_mutex_lock(&mutex1); 
-     // printf ("Port %d appears to be closed\n", ntohs (tcp->th_sport));
+      //printf ("Port %d appears to be closed\n", ntohs (tcp->th_sport));
       storePort[portCount].portNum = ntohs (tcp->th_sport);
       storePort[portCount].id = 1;
       storePort[portCount].timeOut = 0;
@@ -58,7 +59,7 @@ packet_handler (u_char * user, const struct pcap_pkthdr *header,
       if (tcp->th_flags == 0x12)
       {
         pthread_mutex_lock(&mutex1); 
-       // printf ("Port %d appears to be open\n", ntohs (tcp->th_sport));
+        //printf ("Port %d appears to be open\n", ntohs (tcp->th_sport));
         storePort[portCount].portNum = ntohs(tcp->th_sport); 
         storePort[portCount].id = 2;
         storePort[portCount].timeOut = 0;
@@ -168,29 +169,35 @@ void *entry(void * arg)
     exit (1);
   }
   /* set variables for flag/counter */
+  pthread_mutex_lock(&mutex1);
   storePort[portCount].timeOut = 1;
+  pthread_mutex_unlock(&mutex1);
  // answer = 1;
   bundle->tv = time (NULL);
   /* capture the reply */
+
   while (storePort[portCount].timeOut)
-  {  
+  { 
     pcap_dispatch (bundle->handle, -1, packet_handler, NULL);
+    pthread_mutex_lock(&mutex1);
     if ((time (NULL) - bundle->tv) > 2)
     {
-      pthread_mutex_lock(&mutex1); 
       storePort[portCount].timeOut = 0;
       //answer = 0;    /* timed out */
       //printf ("Port %d appears to be filtered\n", bundle->port);
       storePort[portCount].portNum = bundle->port;
       storePort[portCount].id = 3;
       portCount++;
-      pthread_mutex_lock(&mutex1); 
-    } 
+    }
+    pthread_mutex_unlock(&mutex1);
   }
+  pthread_mutex_lock(&mutex1);
   if(storePort[portCount].id == 1 || storePort[portCount].id == 2)
   {
     portCount++;
   }
+  pthread_mutex_unlock(&mutex1);
+  return NULL;
 }
 
 int
@@ -362,12 +369,14 @@ main (int argc, char *argv[])
   pthread_t thread[size];
   for (i = 0; i < size; i++)//loop that assigns port and creates thread
     {
+      //int sleeptime = 1000*50; //5 milliseconds
+      //usleep(sleeptime);
       bundle[i].port = ports[i];
       if (pthread_create(&thread[i], NULL,  entry, &bundle[i]))
       {
         fprintf(stderr, "Error creating thead\n");
         return 1;
-      }
+      } 
    //   testCount++;
     }
  // printf("testCount create: %d\n", testCount);
@@ -388,11 +397,12 @@ main (int argc, char *argv[])
   for (i = 0; i < portCount; i++)//puts ports into an exact array to sort
   {
     printPort[i].portNum = storePort[i].portNum;
-    printPort[i].id = storePort[i].id;
+    printPort[i].id = storePort[i].id; 
   }
 
   int j;
   int temp1;
+  int temp2;
   for(i = 0; i < portCount; i++)//simple n^2 sort array, lowest to highest
   {
     for(j = i + 1; j < portCount; j++)
@@ -400,8 +410,11 @@ main (int argc, char *argv[])
       if(printPort[i].portNum > printPort[j].portNum)
       {
         temp1 = printPort[i].portNum;
+        temp2 = printPort[i].id;
         printPort[i].portNum = printPort[j].portNum;
+        printPort[i].id = printPort[j].id;
         printPort[j].portNum = temp1;
+        printPort[j].id = temp2;
       }
     }
   }
@@ -424,7 +437,8 @@ main (int argc, char *argv[])
   }
   printf("Ports scanned: %d\n", testCount);
   /* exit cleanly */
-  libnet_destroy (l);
+
   pthread_mutex_destroy(&mutex1);
+  libnet_destroy (l);
   return 0;
 }
