@@ -5,4 +5,4 @@ This program uses:
 [libnet](https://github.com/sam-github/libnet)  
 [libpcap](https://github.com/the-tcpdump-group/libpcap)     
 [connector/c](https://dev.mysql.com/downloads/connector/c/) 
-
+[modififed SYN scan, Network Security Tools (Clarke, Dhanjani)](books.gigatux.nl/mirror/networksecuritytools/0596007949/toc.html)
